@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.3] - 2026-02-09
+
+### Added
+
+- **Grid/List view toggle**: New button in header to switch between grid cards and compact list view
+- **List view**: Horizontal layout with 80x80px thumbnails, name, URL, and inline actions
+- **View persistence**: User's view preference stored in localStorage
+- **Dynamic view icons**: Button icon changes between grid-3x3 and list based on active view
+- **Responsive list view**: Adaptive layout for mobile devices (vertical stack)
+- Session validation before page load to prevent flash of unauthorized content
+
+### Changed
+
+- Both root `/` and `/index.html` now redirect to login if not authenticated
+- Improved window.open behavior using native link click for better cross-origin compatibility
+
+### Fixed
+
+- Flash of index.html content before redirect to login (added client-side session check)
+- Star icon not visible in list view (added stroke property to SVG)
+- Cross-origin link opening (qBittorrent and similar services)
+
 ## [0.0.2] - 2026-02-09
 
 ### Added
