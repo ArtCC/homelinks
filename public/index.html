@@ -10,7 +10,26 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
-<body>
+<body style="visibility: hidden;">
+  <script>
+    // Check session before showing content to prevent flash
+    (async function () {
+      try {
+        const response = await fetch("/api/session");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.authenticated) {
+            document.body.style.visibility = "visible";
+            return;
+          }
+        }
+        window.location.href = "/login.html";
+      } catch (err) {
+        window.location.href = "/login.html";
+      }
+    })();
+  </script>
+
   <main class="container">
     <header class="header">
       <div class="header-content">

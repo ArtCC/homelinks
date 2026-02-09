@@ -48,7 +48,7 @@ app.use(
 
 app.use("/uploads", requireAuthPage, express.static(uploadDir));
 app.use((req, res, next) => {
-  if (req.path === "/index.html" && !isAuthenticated(req)) {
+  if ((req.path === "/" || req.path === "/index.html") && !isAuthenticated(req)) {
     return res.redirect("/login.html");
   }
   return next();

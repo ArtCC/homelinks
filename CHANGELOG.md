@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.2] - 2026-02-09
+
+### Added
+
+- **Favorites system**: Star toggle button on app cards to pin important apps
+- **Manual theme selector**: Cycle between auto/light/dark modes with dedicated button
+- **Theme persistence**: User theme preference stored in localStorage
+- **Dynamic theme icons**: Button icon changes between monitor/sun/moon based on selected theme
+- **Collapsible form**: "New app" form can be hidden/shown with toggle button
+- **Empty state differentiation**: Different messages for "no apps" vs "no search results"
+- **Session persistence**: Login session now lasts 30 days (survives browser restart)
+- **Login theme support**: Login page respects user's theme selection
+- Apps automatically ordered by favorite status, then alphabetically
+- New API endpoint: `PATCH /api/apps/:id/favorite` to toggle favorite status
+
+### Changed
+
+- Pagination reduced from 10 to 6 items per page for better visual balance (2 rows × 3 columns)
+- Favorited apps display with gold star icon and highlighted border
+- Theme toggle replaces icon element to ensure proper visual update
+
+### Fixed
+
+- Theme icon not updating visually on click (now replaces DOM element)
+- Session lost on browser restart (added maxAge to cookie configuration)
+
 ## [0.0.1] - 2026-02-09
 
 ### Added
