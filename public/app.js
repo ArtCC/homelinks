@@ -130,12 +130,30 @@ function renderApps(apps) {
 
     deleteBtn.addEventListener("click", async () => {
       if (!confirm(`Delete "${app.name}"?`)) return;
-      const response = await fetch(`/api/apps/${app.id}`, { method: "DELETE" });
-      if (response.status === 401) {
-        window.location.href = "/login.html";
-        return;
+
+      deleteBtn.disabled = true;
+      const originalText = deleteBtn.textContent;
+      deleteBtn.textContent = "Deleting...";
+
+      try {
+        const response = await fetch(`/api/apps/${app.id}`, { method: "DELETE" });
+        if (response.status === 401) {
+          window.location.href = "/login.html";
+          return;
+        }
+        if (!response.ok) {
+          const data = await response.json().catch(() => ({}));
+          alert(data.error || "Failed to delete app");
+          return;
+        }
+        await load();
+      } catch (err) {
+        console.error("Error deleting app:", err);
+        alert("Network error, please try again");
+      } finally {
+        deleteBtn.disabled = false;
+        deleteBtn.textContent = originalText;
       }
-      load();
     });
 
     list.appendChild(item);
@@ -189,6 +207,12 @@ form.addEventListener("submit", async (event) => {
   if (!name || !url) return;
   if (lastImageError) return;
 
+  // Deshabilitar botón y mostrar loading state
+  saveBtn.disabled = true;
+  const originalText = saveBtn.textContent;
+  saveBtn.textContent = "Saving...";
+  setFormError("");
+
   const payload = new FormData();
   payload.append("name", name);
   payload.append("url", url);
@@ -197,28 +221,40 @@ form.addEventListener("submit", async (event) => {
   }
 
   const id = appId.value;
-  if (id) {
-    const response = await fetch(`/api/apps/${id}`, {
-      method: "PUT",
-      body: payload,
-    });
-    if (response.status === 401) {
-      window.location.href = "/login.html";
-      return;
+  try {
+    let response;
+    if (id) {
+      response = await fetch(`/api/apps/${id}`, {
+        method: "PUT",
+        body: payload,
+      });
+    } else {
+      response = await fetch("/api/apps", {
+        method: "POST",
+        body: payload,
+      });
     }
-  } else {
-    const response = await fetch("/api/apps", {
-      method: "POST",
-      body: payload,
-    });
-    if (response.status === 401) {
-      window.location.href = "/login.html";
-      return;
-    }
-  }
 
-  resetForm();
-  load();
+    if (response.status === 401) {
+      window.location.href = "/login.html";
+      return;
+    }
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      setFormError(data.error || "Failed to save app");
+      return;
+    }
+
+    resetForm();
+    await load();
+  } catch (err) {
+    console.error("Error saving app:", err);
+    setFormError("Network error, please try again");
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = originalText;
+  }
 });
 
 cancelBtn.addEventListener("click", () => {

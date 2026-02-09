@@ -21,24 +21,37 @@ form.addEventListener("submit", async (event) => {
   event.preventDefault();
   setError("");
 
+  const submitBtn = event.target.querySelector('button[type="submit"]');
+  submitBtn.disabled = true;
+  const originalText = submitBtn.textContent;
+  submitBtn.textContent = "Signing in...";
+
   const payload = {
     email: emailInput.value.trim(),
     password: passwordInput.value,
   };
 
-  const response = await fetch("/api/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+  try {
+    const response = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
-  if (response.ok) {
-    window.location.href = "/";
-    return;
+    if (response.ok) {
+      window.location.href = "/";
+      return;
+    }
+
+    const data = await response.json().catch(() => ({}));
+    setError(data.error || "Login failed");
+  } catch (err) {
+    console.error("Login error:", err);
+    setError("Network error, please try again");
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalText;
   }
-
-  const data = await response.json().catch(() => ({}));
-  setError(data.error || "Login failed");
 });
 
 checkSession();

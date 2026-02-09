@@ -1,8 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 const sqlite3 = require("sqlite3").verbose();
+const { baseDir } = require("./config/env");
 
-const defaultDbPath = path.join(__dirname, "data", "homelinks.sqlite");
+const defaultDbPath = path.join(baseDir, "data", "homelinks.sqlite");
 const dbPath = process.env.DB_PATH || defaultDbPath;
 
 fs.mkdirSync(path.dirname(dbPath), { recursive: true });
@@ -74,5 +75,13 @@ module.exports = {
   },
   async deleteApp(id) {
     return run("DELETE FROM apps WHERE id = ?", [id]);
+  },
+  close() {
+    return new Promise((resolve) => {
+      db.close((err) => {
+        if (err) console.error("Error closing database:", err);
+        resolve();
+      });
+    });
   },
 };

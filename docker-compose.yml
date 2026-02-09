@@ -8,8 +8,10 @@ services:
       - PORT=${PORT:-9500}
       - DB_PATH=${DB_PATH:-/app/data/homelinks.sqlite}
       - UPLOAD_DIR=${UPLOAD_DIR:-/app/data/uploads}
+      - MAX_IMAGE_SIZE=${MAX_IMAGE_SIZE:-1024}
+      - MAX_IMAGE_BYTES=${MAX_IMAGE_BYTES:-1048576}
       - ADMIN_EMAIL=${ADMIN_EMAIL:?}
-      - ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH:?}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:?}
       - SESSION_SECRET=${SESSION_SECRET:?}
       - COOKIE_SECURE=${COOKIE_SECURE:-false}
     volumes:

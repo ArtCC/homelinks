@@ -2,15 +2,18 @@
 
 Self-hosted bookmarks manager to keep all your Docker apps in one place. Create, edit, and delete entries, then open them in a new tab. Data is persisted in SQLite and the app is ready to deploy with Docker.
 
-> Security note: this project includes basic admin login but is still intended for private networks. Do not expose it publicly.
+> Security note: this project includes basic admin login with rate limiting and timing-attack protection, but is still intended for private networks. Do not expose it publicly without additional security measures.
 
 ## ✨ Features
 
-- CRUD for app name + URL
+- CRUD for app name + URL with validation
 - One-click open in a new tab
 - Optional app thumbnails (jpg/png/webp, max 1024x1024, 1MB)
 - SQLite persistence
 - Docker-ready with optional Portainer stack
+- Rate limiting on login (protection against brute force)
+- Graceful shutdown handling
+- Health check endpoint with database verification
 
 ## 🧱 Tech stack
 
@@ -38,7 +41,7 @@ Open http://localhost:9500
 docker compose up -d
 ```
 
-Make sure you have `ADMIN_EMAIL`, `ADMIN_PASSWORD_HASH`, and `SESSION_SECRET` set in your `.env` file first.
+Make sure you have `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `SESSION_SECRET` set in your `.env` file first.
 
 Open http://localhost:9500
 
@@ -55,8 +58,10 @@ services:
       - PORT=${PORT:-9500}
       - DB_PATH=${DB_PATH:-/app/data/homelinks.sqlite}
       - UPLOAD_DIR=${UPLOAD_DIR:-/app/data/uploads}
+      - MAX_IMAGE_SIZE=${MAX_IMAGE_SIZE:-1024}
+      - MAX_IMAGE_BYTES=${MAX_IMAGE_BYTES:-1048576}
       - ADMIN_EMAIL=${ADMIN_EMAIL:?}
-      - ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH:?}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:?}
       - SESSION_SECRET=${SESSION_SECRET:?}
       - COOKIE_SECURE=${COOKIE_SECURE:-false}
     volumes:
@@ -84,8 +89,10 @@ docker pull ghcr.io/artcc/homelinks:latest
 | `DB_PATH` | SQLite database path | No | `./data/homelinks.sqlite` |
 | `DATA_DIR` | Host data directory for Docker volume | No | `./data` |
 | `UPLOAD_DIR` | Uploads directory | No | `./data/uploads` |
+| `MAX_IMAGE_SIZE` | Max image dimensions (px) | No | 1024 |
+| `MAX_IMAGE_BYTES` | Max image file size (bytes) | No | 1048576 (1MB) |
 | `ADMIN_EMAIL` | Admin email for login | Yes | - |
-| `ADMIN_PASSWORD_HASH` | Admin password bcrypt hash | Yes | - |
+| `ADMIN_PASSWORD` | Admin password (plain text) | Yes | - |
 | `SESSION_SECRET` | Session secret | Yes | - |
 | `COOKIE_SECURE` | Set `true` behind HTTPS | No | `false` |
 
@@ -98,8 +105,15 @@ PORT=9500
 DB_PATH=/app/data/homelinks.sqlite
 DATA_DIR=./data
 UPLOAD_DIR=/app/data/uploads
+MAX_IMAGE_SIZE=1024
+MAX_IMAGE_BYTES=1048576
 ADMIN_EMAIL=admin@example.com
-ADMIN_PASSWORD_HASH=
+ADMIN_PASSWORD=
+SESSION_SECRET=change-me
+COOKIE_SECURE=false
+```
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=
 SESSION_SECRET=change-me
 COOKIE_SECURE=false
 ```
@@ -107,11 +121,7 @@ COOKIE_SECURE=false
 If you run Docker Compose, it will also read `.env` and use `PORT`, `DB_PATH`, `DATA_DIR`, and `UPLOAD_DIR`.
 For local development, you can remove `DB_PATH` or set it to `./data/homelinks.sqlite`.
 
-### Generate password hash
-
-```bash
-node -e "const bcrypt = require('bcryptjs'); console.log(bcrypt.hashSync('your_password', 10));"
-```
+Store the admin password in `ADMIN_PASSWORD` (plain text).
 
 ## 💾 Data persistence
 
