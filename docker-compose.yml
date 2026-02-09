@@ -6,7 +6,7 @@ services:
       - "${PORT:-9500}:${PORT:-9500}"
     environment:
       - PORT=${PORT:-9500}
-      - DB_PATH=/app/data/homelinks.sqlite
+      - DB_PATH=${DB_PATH:-/app/data/homelinks.sqlite}
     volumes:
-      - ./data:/app/data
+      - ${DATA_DIR:-./data}:/app/data
     restart: unless-stopped

@@ -48,9 +48,9 @@ services:
 			- "${PORT:-9500}:${PORT:-9500}"
 		environment:
 			- PORT=${PORT:-9500}
-			- DB_PATH=/app/data/homelinks.sqlite
+			- DB_PATH=${DB_PATH:-/app/data/homelinks.sqlite}
 		volumes:
-			- ./data:/app/data
+			- ${DATA_DIR:-./data}:/app/data
 		restart: unless-stopped
 ```
 
@@ -72,6 +72,7 @@ docker pull ghcr.io/artcc/homelinks:latest
 | --- | --- | --- | --- |
 | `PORT` | Server port | No | 9500 |
 | `DB_PATH` | SQLite database path | No | `./data/homelinks.sqlite` |
+| `DATA_DIR` | Host data directory for Docker volume | No | `./data` |
 
 ### .env example
 
@@ -79,10 +80,12 @@ Create a `.env` file based on [.env.example](.env.example):
 
 ```env
 PORT=9500
-DB_PATH=./data/homelinks.sqlite
+DB_PATH=/app/data/homelinks.sqlite
+DATA_DIR=./data
 ```
 
-If you run Docker Compose, it will also read `.env` and use `PORT` for port mapping.
+If you run Docker Compose, it will also read `.env` and use `PORT`, `DB_PATH`, and `DATA_DIR`.
+For local development, you can remove `DB_PATH` or set it to `./data/homelinks.sqlite`.
 
 ## 💾 Data persistence
 
