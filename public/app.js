@@ -26,6 +26,8 @@ const emptyIcon = document.getElementById("empty-icon");
 const emptyMessage = document.getElementById("empty-message");
 const emptyHint = document.getElementById("empty-hint");
 const themeToggleBtn = document.getElementById("theme-toggle-btn");
+const viewToggleBtn = document.getElementById("view-toggle-btn");
+const listTemplate = document.getElementById("app-list-item-template");
 
 const maxImageBytes = 1 * 1024 * 1024;
 const maxImageSize = 1024;
@@ -130,16 +132,23 @@ function renderApps(apps) {
     }
   }
 
+  // Determinar vista actual
+  const currentView = getStoredView();
+  const currentTemplate = currentView === "list" ? listTemplate : template;
+  const isListView = currentView === "list";
+
   apps.forEach((app) => {
-    const node = template.content.cloneNode(true);
-    const item = node.querySelector(".app-card");
-    const thumb = node.querySelector(".app-thumbnail");
-    const name = node.querySelector(".app-name");
-    const link = node.querySelector(".app-url");
+    const node = currentTemplate.content.cloneNode(true);
+
+    // Selectors depending on view
+    const item = node.querySelector(isListView ? ".app-list-item" : ".app-card");
+    const thumb = node.querySelector(isListView ? ".list-item-thumbnail" : ".app-thumbnail");
+    const name = node.querySelector(isListView ? ".list-item-name" : ".app-name");
+    const link = node.querySelector(isListView ? ".list-item-url" : ".app-url");
     const openBtn = node.querySelector(".open");
     const editBtn = node.querySelector(".edit");
     const deleteBtn = node.querySelector(".delete");
-    const favoriteBtn = node.querySelector(".btn-favorite");
+    const favoriteBtn = node.querySelector(isListView ? ".btn-favorite-list" : ".btn-favorite");
     const starIcon = node.querySelector(".star-icon");
 
     name.textContent = app.name;
@@ -450,11 +459,63 @@ function cycleTheme() {
   setTheme(nextTheme);
 }
 
+// View management
+const VIEW_MODES = ["grid", "list"];
+const VIEW_ICONS = {
+  grid: "grid-3x3",
+  list: "list"
+};
+
+function getStoredView() {
+  return localStorage.getItem("view") || "grid";
+}
+
+function setView(view) {
+  localStorage.setItem("view", view);
+
+  // Update list class
+  if (view === "list") {
+    list.classList.add("list-view");
+  } else {
+    list.classList.remove("list-view");
+  }
+
+  // Update icon
+  const iconName = VIEW_ICONS[view];
+  const currentIcon = document.getElementById("view-icon");
+  if (currentIcon) {
+    currentIcon.innerHTML = "";
+    currentIcon.setAttribute("data-lucide", iconName);
+
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  }
+
+  // Re-render apps with new view
+  renderAndPaginate();
+}
+
+function cycleView() {
+  const current = getStoredView();
+  const currentIndex = VIEW_MODES.indexOf(current);
+  const nextIndex = (currentIndex + 1) % VIEW_MODES.length;
+  const nextView = VIEW_MODES[nextIndex];
+  setView(nextView);
+}
+
 // Initialize theme
 setTheme(getStoredTheme());
 
 themeToggleBtn.addEventListener("click", () => {
   cycleTheme();
+});
+
+// Initialize view
+setView(getStoredView());
+
+viewToggleBtn.addEventListener("click", () => {
+  cycleView();
 });
 
 load();

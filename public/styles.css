@@ -844,6 +844,171 @@ button i {
 }
 
 /* ========================================
+   List View
+   ======================================== */
+.apps.list-view {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.app-list-item {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all var(--transition-base);
+  animation: scaleIn var(--transition-base) ease-out;
+  animation-fill-mode: backwards;
+}
+
+.app-list-item:hover {
+  border-color: var(--accent-primary);
+  box-shadow: var(--shadow-lg);
+  transform: translateX(4px);
+}
+
+.app-list-item.is-favorite {
+  border-color: #fbbf24;
+}
+
+/* List item stagger animation */
+.app-list-item:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+.app-list-item:nth-child(2) {
+  animation-delay: 50ms;
+}
+
+.app-list-item:nth-child(3) {
+  animation-delay: 100ms;
+}
+
+.app-list-item:nth-child(4) {
+  animation-delay: 150ms;
+}
+
+.app-list-item:nth-child(5) {
+  animation-delay: 200ms;
+}
+
+.app-list-item:nth-child(6) {
+  animation-delay: 250ms;
+}
+
+/* List thumbnail */
+.list-item-thumbnail-wrapper {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  min-width: 80px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-tertiary);
+}
+
+.list-item-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.list-item-thumbnail-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--accent-light) 0%, var(--bg-tertiary) 100%);
+}
+
+.list-item-thumbnail-placeholder i {
+  width: 32px;
+  height: 32px;
+  color: var(--accent-primary);
+  opacity: 0.6;
+}
+
+.list-item-thumbnail[src]:not([src=""])~.list-item-thumbnail-placeholder {
+  display: none;
+}
+
+/* List content */
+.list-item-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.list-item-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.list-item-url {
+  font-size: 0.9rem;
+  color: var(--text-tertiary);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color var(--transition-fast);
+}
+
+.list-item-url:hover {
+  color: var(--accent-primary);
+}
+
+/* List actions */
+.list-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn-favorite-list {
+  width: 38px;
+  height: 38px;
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--text-secondary);
+}
+
+.btn-favorite-list:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--accent-primary);
+  transform: scale(1.1);
+}
+
+.btn-favorite-list .star-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.btn-favorite-list .star-filled {
+  fill: #fbbf24;
+  color: #fbbf24;
+}
+
+/* ========================================
    Responsive
    ======================================== */
 @media (max-width: 768px) {
@@ -883,6 +1048,15 @@ button i {
   .app-actions .btn-primary {
     flex: 1 1 100%;
   }
+
+  /* List view responsive */
+  .list-item-actions {
+    flex-wrap: wrap;
+  }
+
+  .list-item-actions .btn-primary {
+    flex: 1 1 100%;
+  }
 }
 
 @media (max-width: 480px) {
@@ -893,5 +1067,34 @@ button i {
   .header {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  /* List view mobile */
+  .app-list-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .list-item-thumbnail-wrapper {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  .list-item-content {
+    width: 100%;
+  }
+
+  .list-item-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .list-item-actions .btn-primary {
+    flex: 1;
+  }
+
+  .list-item-actions .btn-ghost {
+    min-width: 44px;
   }
 }

@@ -40,6 +40,9 @@
         <p>Quick access to your Docker apps</p>
       </div>
       <div class="header-actions">
+        <button id="view-toggle-btn" class="btn-ghost" title="Toggle view">
+          <i data-lucide="grid-3x3" id="view-icon"></i>
+        </button>
         <button id="theme-toggle-btn" class="btn-ghost" title="Toggle theme">
           <i data-lucide="monitor" id="theme-icon"></i>
         </button>
@@ -130,6 +133,36 @@
         <a class="app-url" target="_blank" rel="noopener"></a>
       </div>
       <div class="app-actions">
+        <button class="btn-primary open" title="Open in new tab">
+          <i data-lucide="external-link"></i>
+          <span>Open</span>
+        </button>
+        <button class="btn-ghost edit" title="Edit">
+          <i data-lucide="pencil"></i>
+        </button>
+        <button class="btn-ghost btn-danger delete" title="Delete">
+          <i data-lucide="trash-2"></i>
+        </button>
+      </div>
+    </li>
+  </template>
+
+  <template id="app-list-item-template">
+    <li class="app-list-item">
+      <div class="list-item-thumbnail-wrapper">
+        <img class="list-item-thumbnail" alt="" />
+        <div class="list-item-thumbnail-placeholder">
+          <i data-lucide="package"></i>
+        </div>
+      </div>
+      <div class="list-item-content">
+        <h3 class="list-item-name"></h3>
+        <a class="list-item-url" target="_blank" rel="noopener"></a>
+      </div>
+      <div class="list-item-actions">
+        <button class="btn-favorite-list" title="Toggle favorite">
+          <i data-lucide="star" class="star-icon"></i>
+        </button>
         <button class="btn-primary open" title="Open in new tab">
           <i data-lucide="external-link"></i>
           <span>Open</span>
