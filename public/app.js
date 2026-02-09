@@ -90,6 +90,7 @@ function resetForm() {
   form.reset();
   imageInput.value = "";
   imagePreview.hidden = true;
+  previewImg.src = "";
   setFormError("");
 }
 
@@ -129,6 +130,19 @@ function renderApps(apps) {
       formTitle.textContent = "Edit app";
       saveBtn.textContent = "Update";
       cancelBtn.hidden = false;
+
+      // Mostrar imagen actual en el preview si existe
+      if (app.image_url) {
+        previewImg.src = app.image_url;
+        imagePreview.hidden = false;
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+        }
+      } else {
+        imagePreview.hidden = true;
+        previewImg.src = "";
+      }
+
       nameInput.focus();
     });
 
