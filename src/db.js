@@ -26,6 +26,10 @@ db.serialize(() => {
     if (!hasImage) {
       db.run("ALTER TABLE apps ADD COLUMN image_url TEXT");
     }
+    const hasFavorite = rows.some((row) => row.name === "favorite");
+    if (!hasFavorite) {
+      db.run("ALTER TABLE apps ADD COLUMN favorite INTEGER DEFAULT 0");
+    }
   });
 });
 
@@ -50,19 +54,19 @@ function all(sql, params = []) {
 module.exports = {
   async listApps() {
     return all(
-      "SELECT id, name, url, image_url, created_at FROM apps ORDER BY name COLLATE NOCASE ASC"
+      "SELECT id, name, url, image_url, favorite, created_at FROM apps ORDER BY favorite DESC, name COLLATE NOCASE ASC"
     );
   },
   async getAppById(id) {
     const rows = await all(
-      "SELECT id, name, url, image_url FROM apps WHERE id = ?",
+      "SELECT id, name, url, image_url, favorite FROM apps WHERE id = ?",
       [id]
     );
     return rows[0] || null;
   },
   async createApp(name, url, imageUrl = null) {
     const result = await run(
-      "INSERT INTO apps (name, url, image_url) VALUES (?, ?, ?)",
+      "INSERT INTO apps (name, url, image_url, favorite) VALUES (?, ?, ?, 0)",
       [name, url, imageUrl]
     );
     return result.id;
@@ -71,6 +75,12 @@ module.exports = {
     return run(
       "UPDATE apps SET name = ?, url = ?, image_url = COALESCE(?, image_url) WHERE id = ?",
       [name, url, imageUrl, id]
+    );
+  },
+  async toggleFavorite(id) {
+    return run(
+      "UPDATE apps SET favorite = NOT favorite WHERE id = ?",
+      [id]
     );
   },
   async deleteApp(id) {

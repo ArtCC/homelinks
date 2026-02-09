@@ -122,4 +122,21 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+router.patch("/:id/favorite", async (req, res) => {
+  const id = Number(req.params.id);
+  if (!id) {
+    return res.status(400).json({ error: "id is required" });
+  }
+
+  try {
+    const result = await db.toggleFavorite(id);
+    if (result.changes === 0) {
+      return res.status(404).json({ error: "app not found" });
+    }
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to toggle favorite" });
+  }
+});
+
 module.exports = router;

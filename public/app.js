@@ -138,6 +138,8 @@ function renderApps(apps) {
     const openBtn = node.querySelector(".open");
     const editBtn = node.querySelector(".edit");
     const deleteBtn = node.querySelector(".delete");
+    const favoriteBtn = node.querySelector(".btn-favorite");
+    const starIcon = node.querySelector(".star-icon");
 
     name.textContent = app.name;
     link.textContent = app.url;
@@ -149,6 +151,32 @@ function renderApps(apps) {
     } else {
       thumb.hidden = true;
     }
+
+    // Configurar estado de favorito
+    if (app.favorite) {
+      item.classList.add("is-favorite");
+      starIcon.setAttribute("data-lucide", "star");
+      starIcon.classList.add("star-filled");
+    } else {
+      starIcon.setAttribute("data-lucide", "star");
+      starIcon.classList.remove("star-filled");
+    }
+
+    favoriteBtn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      try {
+        const response = await fetch(`/api/apps/${app.id}/favorite`, { method: "PATCH" });
+        if (response.status === 401) {
+          window.location.href = "/login.html";
+          return;
+        }
+        if (response.ok) {
+          await load();
+        }
+      } catch (err) {
+        console.error("Error toggling favorite:", err);
+      }
+    });
 
     openBtn.addEventListener("click", () => {
       window.open(app.url, "_blank", "noopener");

@@ -645,6 +645,49 @@ button i {
   display: none;
 }
 
+/* Favorite Button */
+.btn-favorite {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  z-index: 10;
+  backdrop-filter: blur(8px);
+}
+
+.btn-favorite:hover {
+  background: rgba(0, 0, 0, 0.7);
+  transform: scale(1.1);
+}
+
+.btn-favorite .star-icon {
+  width: 18px;
+  height: 18px;
+  color: #fbbf24;
+  transition: all var(--transition-base);
+  fill: none;
+  stroke-width: 2;
+}
+
+.btn-favorite .star-icon.star-filled {
+  fill: #fbbf24;
+  stroke: #f59e0b;
+}
+
+.is-favorite {
+  border-color: #fbbf24;
+}
+
 /* Content */
 .app-content {
   flex: 1;
