@@ -5,6 +5,9 @@ const appId = document.getElementById("app-id");
 const nameInput = document.getElementById("name");
 const urlInput = document.getElementById("url");
 const imageInput = document.getElementById("image");
+const imagePreview = document.getElementById("image-preview");
+const previewImg = document.getElementById("preview-img");
+const removePreviewBtn = document.getElementById("remove-preview");
 const cancelBtn = document.getElementById("cancel-btn");
 const formTitle = document.getElementById("form-title");
 const saveBtn = document.getElementById("save-btn");
@@ -86,6 +89,7 @@ function resetForm() {
   cancelBtn.hidden = true;
   form.reset();
   imageInput.value = "";
+  imagePreview.hidden = true;
   setFormError("");
 }
 
@@ -95,8 +99,8 @@ function renderApps(apps) {
 
   apps.forEach((app) => {
     const node = template.content.cloneNode(true);
-    const item = node.querySelector(".app-item");
-    const thumb = node.querySelector(".app-thumb");
+    const item = node.querySelector(".app-card");
+    const thumb = node.querySelector(".app-thumbnail");
     const name = node.querySelector(".app-name");
     const link = node.querySelector(".app-url");
     const openBtn = node.querySelector(".open");
@@ -158,6 +162,11 @@ function renderApps(apps) {
 
     list.appendChild(item);
   });
+
+  // Renderizar iconos de Lucide en los elementos dinámicos
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
 }
 
 async function load() {
@@ -265,6 +274,7 @@ imageInput.addEventListener("change", async () => {
   const file = imageInput.files[0];
   if (!file) {
     setFormError("");
+    imagePreview.hidden = true;
     return;
   }
 
@@ -272,9 +282,26 @@ imageInput.addEventListener("change", async () => {
   if (message) {
     setFormError(message);
     imageInput.value = "";
+    imagePreview.hidden = true;
   } else {
     setFormError("");
+    // Mostrar preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      previewImg.src = e.target.result;
+      imagePreview.hidden = false;
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+    };
+    reader.readAsDataURL(file);
   }
+});
+
+removePreviewBtn.addEventListener("click", () => {
+  imageInput.value = "";
+  imagePreview.hidden = true;
+  previewImg.src = "";
 });
 
 searchInput.addEventListener("input", () => {

@@ -6,12 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>homelinks - Login</title>
   <link rel="stylesheet" href="/styles.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body>
   <main class="container auth-container">
     <header class="header auth-header">
-      <h1>homelinks</h1>
+      <h1>
+        <i data-lucide="link-2" class="icon-logo"></i>
+        homelinks
+      </h1>
       <p>Sign in to continue</p>
     </header>
 
@@ -35,6 +39,9 @@
   </main>
 
   <script src="/login.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
 </body>
 
 </html>

@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial release with CRUD UI for app bookmarks
+- Modern grid-based card layout for apps (responsive: 3 columns desktop, 2 tablet, 1 mobile)
+- Lucide icon system throughout the UI
+- Image preview before uploading
+- Microanimations: fade-in, scale-in, stagger animations for cards
+- Hover effects with elevation and scaling
+- Dark mode support based on system preference (`prefers-color-scheme`)
+- Enhanced focus states with visible focus rings
+- Modern color palette (Indigo accent, improved contrast)
+- Improved empty states with icons and helpful messages
+- Better search box with icon
+- Thumbnail placeholders with gradients when no image
 - SQLite persistence and REST API
 - Docker/Portainer deployment ready with GHCR image publishing
 - Admin login with session management
@@ -26,6 +37,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced health check endpoint with database connectivity verification
 - Timing-attack protection using `crypto.timingSafeEqual` for both email and password comparison
 - Responsive design with mobile support
+
+### Changed
+
+- Redesigned complete UI with modern, minimalist aesthetic
+- Updated color system with CSS variables for light/dark modes
+- Improved button styles with better states (hover, focus, disabled)
+- Enhanced typography and spacing
+- Larger app thumbnails (16:9 aspect ratio vs 56x56px)
+- Improved mobile responsive design
 
 ### Security
 

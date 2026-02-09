@@ -6,16 +6,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>homelinks</title>
   <link rel="stylesheet" href="/styles.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body>
   <main class="container">
     <header class="header">
-      <div>
-        <h1>homelinks</h1>
+      <div class="header-content">
+        <h1>
+          <i data-lucide="link-2" class="icon-logo"></i>
+          homelinks
+        </h1>
         <p>Self-hosted bookmarks manager</p>
       </div>
-      <button id="logout-btn" class="ghost">Logout</button>
+      <button id="logout-btn" class="btn-ghost">
+        <i data-lucide="log-out"></i>
+        <span>Logout</span>
+      </button>
     </header>
 
     <section class="form-card">
@@ -33,6 +40,12 @@
         <label>
           Image (optional, max 1024x1024, 1MB)
           <input type="file" id="image" accept="image/png,image/jpeg,image/webp" />
+          <div id="image-preview" class="image-preview" hidden>
+            <img id="preview-img" alt="Preview" />
+            <button type="button" id="remove-preview" class="btn-icon" title="Remove image">
+              <i data-lucide="x"></i>
+            </button>
+          </div>
         </label>
         <div id="form-error" class="form-error" hidden></div>
         <div class="form-actions">
@@ -47,39 +60,63 @@
     <section class="list-card">
       <h2>Apps</h2>
       <div class="list-toolbar">
-        <input type="search" id="search" placeholder="Search apps" autocomplete="off" />
+        <div class="search-box">
+          <i data-lucide="search"></i>
+          <input type="search" id="search" placeholder="Search apps..." autocomplete="off" />
+        </div>
         <span id="count" class="count"></span>
       </div>
       <div id="empty" class="empty" hidden>
-        You do not have any apps yet. Add the first one above.
+        <i data-lucide="inbox" class="empty-icon"></i>
+        <p>You do not have any apps yet.</p>
+        <p class="empty-hint">Add your first one above to get started!</p>
       </div>
       <ul id="apps" class="apps"></ul>
       <div id="pagination" class="pagination" hidden>
-        <button type="button" id="prev-page" class="ghost">Prev</button>
+        <button type="button" id="prev-page" class="btn-ghost">
+          <i data-lucide="chevron-left"></i>
+          <span>Prev</span>
+        </button>
         <span id="page-info" class="page-info"></span>
-        <button type="button" id="next-page" class="ghost">Next</button>
+        <button type="button" id="next-page" class="btn-ghost">
+          <span>Next</span>
+          <i data-lucide="chevron-right"></i>
+        </button>
       </div>
     </section>
   </main>
 
   <template id="app-item-template">
-    <li class="app-item">
-      <div class="app-info">
-        <img class="app-thumb" alt="" />
-        <div class="app-text">
-          <h3 class="app-name"></h3>
-          <a class="app-url" target="_blank" rel="noopener"></a>
+    <li class="app-card">
+      <div class="app-thumbnail-wrapper">
+        <img class="app-thumbnail" alt="" />
+        <div class="app-thumbnail-placeholder">
+          <i data-lucide="package"></i>
         </div>
       </div>
+      <div class="app-content">
+        <h3 class="app-name"></h3>
+        <a class="app-url" target="_blank" rel="noopener"></a>
+      </div>
       <div class="app-actions">
-        <button class="open">Open</button>
-        <button class="edit ghost">Edit</button>
-        <button class="delete ghost danger">Delete</button>
+        <button class="btn-primary open" title="Open in new tab">
+          <i data-lucide="external-link"></i>
+          <span>Open</span>
+        </button>
+        <button class="btn-ghost edit" title="Edit">
+          <i data-lucide="pencil"></i>
+        </button>
+        <button class="btn-ghost btn-danger delete" title="Delete">
+          <i data-lucide="trash-2"></i>
+        </button>
       </div>
     </li>
   </template>
 
   <script src="/app.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
 </body>
 
 </html>
