@@ -22,6 +22,9 @@ const nextPageBtn = document.getElementById("next-page");
 const pageInfo = document.getElementById("page-info");
 const addAppBtn = document.getElementById("add-app-btn");
 const formSection = document.getElementById("form-section");
+const emptyIcon = document.getElementById("empty-icon");
+const emptyMessage = document.getElementById("empty-message");
+const emptyHint = document.getElementById("empty-hint");
 
 const maxImageBytes = 1 * 1024 * 1024;
 const maxImageSize = 1024;
@@ -103,7 +106,28 @@ function showForm() {
 
 function renderApps(apps) {
   list.innerHTML = "";
-  empty.hidden = apps.length > 0;
+
+  // Determinar si estamos buscando
+  const isSearching = searchInput.value.trim().length > 0;
+  const hasApps = apps.length > 0;
+
+  empty.hidden = hasApps;
+
+  // Actualizar mensaje según contexto
+  if (!hasApps) {
+    if (isSearching) {
+      emptyIcon.setAttribute("data-lucide", "search-x");
+      emptyMessage.textContent = "No apps found.";
+      emptyHint.textContent = "Try a different search term.";
+    } else if (allApps.length === 0) {
+      emptyIcon.setAttribute("data-lucide", "inbox");
+      emptyMessage.textContent = "You do not have any apps yet.";
+      emptyHint.innerHTML = 'Click <strong>Add app</strong> to get started!';
+    }
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  }
 
   apps.forEach((app) => {
     const node = template.content.cloneNode(true);

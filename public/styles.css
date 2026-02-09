@@ -525,9 +525,11 @@ button i {
   font-weight: 600;
   font-size: 0.95rem;
   white-space: nowrap;
-  padding: 8px 16px;
+  padding: 10px 16px;
   background: var(--bg-tertiary);
   border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
 }
 
 /* ========================================
