@@ -180,7 +180,7 @@ function renderApps(apps) {
     });
 
     openBtn.addEventListener("click", () => {
-      window.open(app.url, "_blank", "noopener");
+      link.click();
     });
 
     editBtn.addEventListener("click", () => {
