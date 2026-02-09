@@ -1,0 +1,12 @@
+services:
+  homelinks:
+    image: ghcr.io/artcc/homelinks:latest
+    container_name: homelinks
+    ports:
+      - "${PORT:-9500}:${PORT:-9500}"
+    environment:
+      - PORT=${PORT:-9500}
+      - DB_PATH=/app/data/homelinks.sqlite
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

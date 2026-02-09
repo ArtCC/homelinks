@@ -1,0 +1,140 @@
+:root {
+  color-scheme: light;
+  --bg: #f4f1ec;
+  --panel: #ffffff;
+  --ink: #1c1c1c;
+  --muted: #6a6a6a;
+  --accent: #0a6b57;
+  --accent-2: #f4b400;
+  --danger: #b00020;
+  --shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  --radius: 16px;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #fff6e8, var(--bg));
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px 60px;
+  display: grid;
+  gap: 24px;
+}
+
+.header h1 {
+  font-size: 2.4rem;
+  margin-bottom: 4px;
+}
+
+.header p {
+  color: var(--muted);
+  margin: 0;
+}
+
+.form-card,
+.list-card {
+  background: var(--panel);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+input {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #dad6cf;
+  margin-top: 8px;
+  font-size: 1rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+}
+
+button {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-weight: 600;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+}
+
+button.ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid #d7d2ca;
+}
+
+button.danger {
+  color: var(--danger);
+  border-color: rgba(176, 0, 32, 0.35);
+}
+
+.apps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.app-item {
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid #e6e1d9;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fffdf9;
+}
+
+.app-name {
+  margin: 0 0 6px;
+  font-size: 1.2rem;
+}
+
+.app-url {
+  color: var(--accent);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.app-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.empty {
+  color: var(--muted);
+  padding: 12px 0;
+}
+
+@media (max-width: 600px) {
+  .app-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
