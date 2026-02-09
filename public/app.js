@@ -20,6 +20,8 @@ const pagination = document.getElementById("pagination");
 const prevPageBtn = document.getElementById("prev-page");
 const nextPageBtn = document.getElementById("next-page");
 const pageInfo = document.getElementById("page-info");
+const addAppBtn = document.getElementById("add-app-btn");
+const formSection = document.getElementById("form-section");
 
 const maxImageBytes = 1 * 1024 * 1024;
 const maxImageSize = 1024;
@@ -86,12 +88,17 @@ function resetForm() {
   appId.value = "";
   formTitle.textContent = "New app";
   saveBtn.textContent = "Save";
-  cancelBtn.hidden = true;
   form.reset();
   imageInput.value = "";
   imagePreview.hidden = true;
   previewImg.src = "";
   setFormError("");
+  formSection.hidden = true;
+}
+
+function showForm() {
+  formSection.hidden = false;
+  nameInput.focus();
 }
 
 function renderApps(apps) {
@@ -129,7 +136,6 @@ function renderApps(apps) {
       urlInput.value = app.url;
       formTitle.textContent = "Edit app";
       saveBtn.textContent = "Update";
-      cancelBtn.hidden = false;
 
       // Mostrar imagen actual en el preview si existe
       if (app.image_url) {
@@ -143,7 +149,7 @@ function renderApps(apps) {
         previewImg.src = "";
       }
 
-      nameInput.focus();
+      showForm();
     });
 
     deleteBtn.addEventListener("click", async () => {
@@ -339,5 +345,9 @@ if (logoutBtn) {
     window.location.href = "/login.html";
   });
 }
+
+addAppBtn.addEventListener("click", () => {
+  showForm();
+});
 
 load();

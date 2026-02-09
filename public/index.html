@@ -25,7 +25,12 @@
       </button>
     </header>
 
-    <section class="form-card">
+    <button id="add-app-btn" class="btn-primary btn-add-app">
+      <i data-lucide="plus"></i>
+      <span>Add app</span>
+    </button>
+
+    <section id="form-section" class="form-card" hidden>
       <h2 id="form-title">New app</h2>
       <form id="app-form">
         <input type="hidden" id="app-id" />
@@ -50,7 +55,7 @@
         <div id="form-error" class="form-error" hidden></div>
         <div class="form-actions">
           <button type="submit" id="save-btn">Save</button>
-          <button type="button" id="cancel-btn" class="ghost" hidden>
+          <button type="button" id="cancel-btn" class="btn-ghost">
             Cancel
           </button>
         </div>
@@ -60,10 +65,8 @@
     <section class="list-card">
       <h2>Apps</h2>
       <div class="list-toolbar">
-        <div class="search-box">
-          <i data-lucide="search"></i>
-          <input type="search" id="search" placeholder="Search apps..." autocomplete="off" />
-        </div>
+        <i data-lucide="search" class="search-icon"></i>
+        <input type="search" id="search" placeholder="Search apps..." autocomplete="off" />
         <span id="count" class="count"></span>
       </div>
       <div id="empty" class="empty" hidden>

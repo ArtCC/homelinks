@@ -219,6 +219,27 @@ body {
 }
 
 /* ========================================
+   Add App Button
+   ======================================== */
+.btn-add-app {
+  width: 100%;
+  max-width: 200px;
+  margin: 0 auto 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  animation: fadeIn var(--transition-slow) ease-out;
+}
+
+.btn-add-app i {
+  width: 20px;
+  height: 20px;
+}
+
+/* ========================================
    Cards
    ======================================== */
 .form-card,
@@ -461,29 +482,36 @@ button i {
 .list-toolbar {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   margin-bottom: 24px;
 }
 
-.search-box {
-  position: relative;
-  flex: 1;
-}
-
-.search-box i {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
+.search-icon {
   width: 20px;
   height: 20px;
   color: var(--text-tertiary);
-  pointer-events: none;
+  flex-shrink: 0;
 }
 
-.search-box input {
-  padding-left: 44px;
-  margin: 0;
+.list-toolbar input[type="search"] {
+  flex: 1;
+  padding: 10px 16px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  transition: all var(--transition-base);
+}
+
+.list-toolbar input[type="search"]:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-light);
+}
+
+.list-toolbar input[type="search"]::placeholder {
+  color: var(--text-tertiary);
 }
 
 .count {
