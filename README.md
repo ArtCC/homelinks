@@ -1,6 +1,4 @@
-<img src="public/favicon.svg" width="40" height="40" alt="Homelinks" align="left"> 
-
-# Homelinks
+# <img src="public/favicon.svg" width="32" height="32" alt="" style="vertical-align: middle;"> Homelinks
 
 Keep all your Docker services organized in one place. A modern, self-hosted dashboard designed for Docker deployments. Quick access to your apps with a clean UI, favorites, dark mode, and persistent SQLite storage.
 
@@ -57,9 +55,14 @@ openssl rand -hex 32
 
 ```env
 PORT=9500
+DB_PATH=/app/data/homelinks.sqlite
+UPLOAD_DIR=/app/data/uploads
+MAX_IMAGE_SIZE=1024
+MAX_IMAGE_BYTES=1048576
 ADMIN_EMAIL=your@email.com
 ADMIN_PASSWORD=your_secure_password
 SESSION_SECRET=your_generated_secret_here
+COOKIE_SECURE=false
 ```
 
 2. **Start with docker-compose**:
