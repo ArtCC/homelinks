@@ -1,7 +1,7 @@
 {
   "name": "homelinks",
   "version": "0.0.1",
-  "description": "Self-hosted bookmarks manager",
+  "description": "Keep all your Docker apps in one place",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",

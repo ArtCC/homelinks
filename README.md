@@ -1,6 +1,6 @@
 # Homelinks
 
-Self-hosted bookmarks manager to keep all your Docker apps in one place. Create, edit, and delete entries, then open them in a new tab. Data is persisted in SQLite and the app is ready to deploy with Docker.
+Keep all your Docker apps in one place. A simple, self-hosted dashboard to organize and quickly access your Docker services. Create, edit, and delete entries with optional thumbnails, then open them in a new tab. Data is persisted in SQLite and the app is ready to deploy with Docker.
 
 > Security note: this project includes basic admin login with rate limiting and timing-attack protection, but is still intended for private networks. Do not expose it publicly without additional security measures.
 
