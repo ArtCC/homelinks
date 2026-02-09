@@ -1,7 +1,9 @@
 require("dotenv").config();
 
+const bcrypt = require("bcryptjs");
 const express = require("express");
 const fs = require("fs");
+const session = require("express-session");
 const morgan = require("morgan");
 const multer = require("multer");
 const path = require("path");
@@ -13,13 +15,51 @@ const port = process.env.PORT || 9500;
 const uploadDir = process.env.UPLOAD_DIR || path.join(__dirname, "data", "uploads");
 const maxImageSize = 1024;
 const maxImageBytes = 1 * 1024 * 1024;
+const sessionSecret = process.env.SESSION_SECRET || "change-me";
+const adminEmail = process.env.ADMIN_EMAIL;
+const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH;
+const publicDir = path.join(__dirname, "public");
+const cookieSecure = process.env.COOKIE_SECURE === "true";
 
 fs.mkdirSync(uploadDir, { recursive: true });
 
 app.use(express.json());
 app.use(morgan("combined"));
-app.use(express.static(path.join(__dirname, "public")));
-app.use("/uploads", express.static(uploadDir));
+app.use(
+  session({
+    secret: sessionSecret,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: cookieSecure,
+    },
+  })
+);
+
+if (!adminEmail || !adminPasswordHash || sessionSecret === "change-me") {
+  console.error(
+    "Auth is required. Set ADMIN_EMAIL, ADMIN_PASSWORD_HASH, and SESSION_SECRET."
+  );
+  process.exit(1);
+}
+
+function isAuthenticated(req) {
+  return Boolean(req.session && req.session.user);
+}
+
+function requireAuthPage(req, res, next) {
+  if (isAuthenticated(req)) return next();
+  return res.redirect("/login.html");
+}
+
+function requireAuthApi(req, res, next) {
+  if (isAuthenticated(req)) return next();
+  return res.status(401).json({ error: "unauthorized" });
+}
+
+app.use("/uploads", requireAuthPage, express.static(uploadDir));
 
 const storage = multer.diskStorage({
   destination: uploadDir,
@@ -73,6 +113,56 @@ function removeUpload(imageUrl) {
 app.get("/health", (req, res) => {
   res.json({ ok: true });
 });
+
+app.get("/", requireAuthPage, (req, res) => {
+  res.sendFile(path.join(publicDir, "index.html"));
+});
+
+app.get("/index.html", requireAuthPage, (req, res) => {
+  res.sendFile(path.join(publicDir, "index.html"));
+});
+
+app.get("/login.html", (req, res) => {
+  res.sendFile(path.join(publicDir, "login.html"));
+});
+
+app.get("/api/session", (req, res) => {
+  if (!isAuthenticated(req)) {
+    return res.json({ authenticated: false });
+  }
+  return res.json({ authenticated: true, email: req.session.user.email });
+});
+
+app.post("/api/login", async (req, res) => {
+  const { email, password } = req.body || {};
+  if (!adminEmail || !adminPasswordHash) {
+    return res.status(500).json({ error: "auth not configured" });
+  }
+  if (!email || !password) {
+    return res.status(400).json({ error: "email and password are required" });
+  }
+
+  const emailMatch = email.trim().toLowerCase() === adminEmail.trim().toLowerCase();
+  const passwordMatch = await bcrypt.compare(password, adminPasswordHash);
+  if (!emailMatch || !passwordMatch) {
+    return res.status(401).json({ error: "invalid credentials" });
+  }
+
+  req.session.user = { email: adminEmail };
+  return res.json({ ok: true });
+});
+
+app.post("/api/logout", (req, res) => {
+  if (!req.session) return res.json({ ok: true });
+  req.session.destroy(() => {
+    res.clearCookie("connect.sid");
+    res.json({ ok: true });
+  });
+});
+
+app.use(express.static(publicDir));
+
+app.use("/api", requireAuthApi);
 
 app.get("/api/apps", async (req, res) => {
   try {

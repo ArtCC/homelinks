@@ -36,6 +36,17 @@ body {
   margin-bottom: 4px;
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.header.auth-header {
+  display: block;
+}
+
 .header p {
   color: var(--muted);
   margin: 0;
@@ -47,6 +58,14 @@ body {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 24px;
+}
+
+.auth-container {
+  max-width: 520px;
+}
+
+.auth-card h2 {
+  margin-top: 0;
 }
 
 label {

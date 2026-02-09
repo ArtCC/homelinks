@@ -8,6 +8,10 @@ services:
       - PORT=${PORT:-9500}
       - DB_PATH=${DB_PATH:-/app/data/homelinks.sqlite}
       - UPLOAD_DIR=${UPLOAD_DIR:-/app/data/uploads}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:?}
+      - ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH:?}
+      - SESSION_SECRET=${SESSION_SECRET:?}
+      - COOKIE_SECURE=${COOKIE_SECURE:-false}
     volumes:
       - ${DATA_DIR:-./data}:/app/data
     restart: unless-stopped

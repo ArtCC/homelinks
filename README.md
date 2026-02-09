@@ -2,7 +2,7 @@
 
 Self-hosted bookmarks manager to keep all your Docker apps in one place. Create, edit, and delete entries, then open them in a new tab. Data is persisted in SQLite and the app is ready to deploy with Docker.
 
-> Security note: this project has no authentication or access control. Do not expose it publicly. It is intended only for private networks to keep a unified list of your Docker apps and open them quickly.
+> Security note: this project includes basic admin login but is still intended for private networks. Do not expose it publicly.
 
 ## ✨ Features
 
@@ -38,6 +38,8 @@ Open http://localhost:9500
 docker compose up -d
 ```
 
+Make sure you have `ADMIN_EMAIL`, `ADMIN_PASSWORD_HASH`, and `SESSION_SECRET` set in your `.env` file first.
+
 Open http://localhost:9500
 
 ### Example docker-compose.yml
@@ -53,6 +55,10 @@ services:
       - PORT=${PORT:-9500}
       - DB_PATH=${DB_PATH:-/app/data/homelinks.sqlite}
       - UPLOAD_DIR=${UPLOAD_DIR:-/app/data/uploads}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:?}
+      - ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH:?}
+      - SESSION_SECRET=${SESSION_SECRET:?}
+      - COOKIE_SECURE=${COOKIE_SECURE:-false}
     volumes:
       - ${DATA_DIR:-./data}:/app/data
     restart: unless-stopped
@@ -78,6 +84,10 @@ docker pull ghcr.io/artcc/homelinks:latest
 | `DB_PATH` | SQLite database path | No | `./data/homelinks.sqlite` |
 | `DATA_DIR` | Host data directory for Docker volume | No | `./data` |
 | `UPLOAD_DIR` | Uploads directory | No | `./data/uploads` |
+| `ADMIN_EMAIL` | Admin email for login | Yes | - |
+| `ADMIN_PASSWORD_HASH` | Admin password bcrypt hash | Yes | - |
+| `SESSION_SECRET` | Session secret | Yes | - |
+| `COOKIE_SECURE` | Set `true` behind HTTPS | No | `false` |
 
 ### .env example
 
@@ -88,10 +98,20 @@ PORT=9500
 DB_PATH=/app/data/homelinks.sqlite
 DATA_DIR=./data
 UPLOAD_DIR=/app/data/uploads
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD_HASH=
+SESSION_SECRET=change-me
+COOKIE_SECURE=false
 ```
 
 If you run Docker Compose, it will also read `.env` and use `PORT`, `DB_PATH`, `DATA_DIR`, and `UPLOAD_DIR`.
 For local development, you can remove `DB_PATH` or set it to `./data/homelinks.sqlite`.
+
+### Generate password hash
+
+```bash
+node -e "const bcrypt = require('bcryptjs'); console.log(bcrypt.hashSync('your_password', 10));"
+```
 
 ## 💾 Data persistence
 

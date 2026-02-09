@@ -9,6 +9,7 @@ const cancelBtn = document.getElementById("cancel-btn");
 const formTitle = document.getElementById("form-title");
 const saveBtn = document.getElementById("save-btn");
 const template = document.getElementById("app-item-template");
+const logoutBtn = document.getElementById("logout-btn");
 const formError = document.getElementById("form-error");
 const searchInput = document.getElementById("search");
 const countLabel = document.getElementById("count");
@@ -36,6 +37,10 @@ function normalizeUrl(url) {
 
 async function fetchApps() {
   const response = await fetch("/api/apps");
+  if (response.status === 401) {
+    window.location.href = "/login.html";
+    return [];
+  }
   if (!response.ok) return [];
   return response.json();
 }
@@ -125,7 +130,11 @@ function renderApps(apps) {
 
     deleteBtn.addEventListener("click", async () => {
       if (!confirm(`Delete "${app.name}"?`)) return;
-      await fetch(`/api/apps/${app.id}`, { method: "DELETE" });
+      const response = await fetch(`/api/apps/${app.id}`, { method: "DELETE" });
+      if (response.status === 401) {
+        window.location.href = "/login.html";
+        return;
+      }
       load();
     });
 
@@ -189,15 +198,23 @@ form.addEventListener("submit", async (event) => {
 
   const id = appId.value;
   if (id) {
-    await fetch(`/api/apps/${id}`, {
+    const response = await fetch(`/api/apps/${id}`, {
       method: "PUT",
       body: payload,
     });
+    if (response.status === 401) {
+      window.location.href = "/login.html";
+      return;
+    }
   } else {
-    await fetch("/api/apps", {
+    const response = await fetch("/api/apps", {
       method: "POST",
       body: payload,
     });
+    if (response.status === 401) {
+      window.location.href = "/login.html";
+      return;
+    }
   }
 
   resetForm();
@@ -238,5 +255,12 @@ nextPageBtn.addEventListener("click", () => {
   currentPage += 1;
   renderAndPaginate();
 });
+
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    await fetch("/api/logout", { method: "POST" });
+    window.location.href = "/login.html";
+  });
+}
 
 load();
