@@ -49,7 +49,7 @@ function all(sql, params = []) {
 module.exports = {
   async listApps() {
     return all(
-      "SELECT id, name, url, image_url, created_at FROM apps ORDER BY id DESC"
+      "SELECT id, name, url, image_url, created_at FROM apps ORDER BY name COLLATE NOCASE ASC"
     );
   },
   async getAppById(id) {
