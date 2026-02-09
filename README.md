@@ -1,51 +1,73 @@
 # Homelinks
 
-Keep all your Docker apps in one place. A simple, self-hosted dashboard to organize and quickly access your Docker services. Create, edit, and delete entries with optional thumbnails, then open them in a new tab. Data is persisted in SQLite and the app is ready to deploy with Docker.
+Keep all your Docker services organized in one place. A modern, self-hosted dashboard designed for Docker deployments. Quick access to your apps with a clean UI, favorites, dark mode, and persistent SQLite storage.
 
-> Security note: this project includes basic admin login with rate limiting and timing-attack protection, but is still intended for private networks. Do not expose it publicly without additional security measures.
+> **Security note**: Includes admin login with rate limiting and timing-attack protection. Designed for private networks behind reverse proxy. Do not expose directly to the internet without additional security measures.
 
 ## ✨ Features
 
-- CRUD for app name + URL with validation
-- One-click open in a new tab
-- Optional app thumbnails (jpg/png/webp, max 1024x1024, 1MB)
-- SQLite persistence
-- Docker-ready with optional Portainer stack
-- Rate limiting on login (protection against brute force)
-- Graceful shutdown handling
-- Health check endpoint with database verification
+### Core
+- **Quick access dashboard** for all your Docker services
+- **One-click open** in new tab
+- **Favorites system** - Pin important apps to the top
+- **Search & filter** - Find apps instantly
+- **Optional thumbnails** (jpg/png/webp, max 1024x1024, 1MB)
+- **Collapsible form** - Clean interface when not editing
 
-## 🧱 Tech stack
+### UI/UX
+- **Modern grid layout** - Responsive cards (3 cols → 2 → 1)
+- **Dark mode** - Auto/Light/Dark theme selector with persistence
+- **Smooth animations** - Fade-in, scale, hover effects
+- **Empty states** - Contextual messages for no apps vs no search results
+- **Loading states** - Visual feedback for all operations
 
-- Node.js + Express
-- SQLite (`sqlite3`)
-- Vanilla HTML/CSS/JS
+### Technical
+- **SQLite persistence** - No external database needed
+- **Docker-first** - Ready for Docker/Portainer deployment
+- **Rate limiting** - Protection against brute force (5 attempts/15min)
+- **Timing-attack protection** - Secure credential comparison
+- **URL validation** - Only valid HTTP/HTTPS
+- **Image validation** - Size, dimensions, and format checks
+- **Graceful shutdown** - Clean database connection handling
+- **Health check endpoint** - Database connectivity verification
 
-## ✅ Requirements
+## 🧱 Tech Stack
 
-- Node.js 20+
-- Docker (optional)
+- **Backend**: Node.js 20 + Express
+- **Database**: SQLite 3
+- **Frontend**: Vanilla HTML/CSS/JS + Lucide Icons
+- **Deployment**: Docker + docker-compose
 
-## 🚀 Quick start (local)
+## 🐳 Docker Deployment
+
+### Quick Start
+
+1. **Create `.env` file** with your credentials:
 
 ```bash
-npm install
-npm start
+# Generate a secure session secret
+openssl rand -hex 32
 ```
 
-Open http://localhost:9500
+```env
+PORT=9500
+ADMIN_EMAIL=your@email.com
+ADMIN_PASSWORD=your_secure_password
+SESSION_SECRET=your_generated_secret_here
+```
 
-## 🐳 Docker
+2. **Start with docker-compose**:
 
 ```bash
 docker compose up -d
 ```
 
-Make sure you have `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `SESSION_SECRET` set in your `.env` file first.
+3. **Access the dashboard**:
+   - Open http://localhost:9500
+   - Login with your credentials
+   - Start adding your Docker services!
 
-Open http://localhost:9500
-
-### Example docker-compose.yml
+### Docker Compose Example
 
 ```yaml
 services:
@@ -69,11 +91,16 @@ services:
     restart: unless-stopped
 ```
 
-### Portainer
+### Portainer Stack
 
-Create a Stack and paste the compose file above. Adjust ports and volumes as needed.
+1. Go to **Stacks** → **Add stack**
+2. Paste the docker-compose.yml above
+3. Add environment variables in the **Environment variables** section
+4. Click **Deploy the stack**
 
-To pull manually:
+### Manual Pull
+
+To pull the latest image manually:
 
 ```bash
 docker pull ghcr.io/artcc/homelinks:latest
@@ -127,12 +154,9 @@ SESSION_SECRET=change-me
 COOKIE_SECURE=false
 ```
 
-If you run Docker Compose, it will also read `.env` and use `PORT`, `DB_PATH`, `DATA_DIR`, and `UPLOAD_DIR`.
-For local development, you can remove `DB_PATH` or set it to `./data/homelinks.sqlite`.
-
 Store the admin password in `ADMIN_PASSWORD` (plain text).
 
-**Important**: Replace `SESSION_SECRET=change-me` with a secure random string (see above).
+**Important**: Replace `SESSION_SECRET=change-me` with a secure random string generated with OpenSSL or Node.js (see Quick Start).
 
 ## 💾 Data persistence
 
@@ -174,9 +198,10 @@ sudo chmod 775 /opt/docker/homelinks/data
 - `POST /api/logout` - Logout and destroy session
 
 ### Apps
-- `GET /api/apps` - List all apps (authenticated)
+- `GET /api/apps` - List all apps (authenticated, ordered by favorite then name)
 - `POST /api/apps` - Create new app (authenticated, multipart form with `name`, `url`, optional `image`)
 - `PUT /api/apps/:id` - Update app (authenticated, multipart form with `name`, `url`, optional `image`)
+- `PATCH /api/apps/:id/favorite` - Toggle favorite status (authenticated)
 - `DELETE /api/apps/:id` - Delete app (authenticated)
 
 ## 🩺 Health check
@@ -192,7 +217,7 @@ Returns:
 }
 ```
 
-## � Troubleshooting
+## 🔧 Troubleshooting
 
 ### "Too many login attempts"
 
@@ -217,7 +242,7 @@ docker compose build --no-cache
 docker compose up -d
 ```
 
-## �📝 Changelog
+## 📋 Changelog
 
 See [CHANGELOG.md](CHANGELOG.md).
 

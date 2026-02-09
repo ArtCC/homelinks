@@ -25,6 +25,8 @@ const formSection = document.getElementById("form-section");
 const emptyIcon = document.getElementById("empty-icon");
 const emptyMessage = document.getElementById("empty-message");
 const emptyHint = document.getElementById("empty-hint");
+const themeToggleBtn = document.getElementById("theme-toggle-btn");
+const themeIcon = document.getElementById("theme-icon");
 
 const maxImageBytes = 1 * 1024 * 1024;
 const maxImageSize = 1024;
@@ -400,6 +402,54 @@ if (logoutBtn) {
 
 addAppBtn.addEventListener("click", () => {
   showForm();
+});
+
+// Theme management
+const THEMES = ["auto", "light", "dark"];
+const THEME_ICONS = {
+  auto: "monitor",
+  light: "sun",
+  dark: "moon"
+};
+
+function getStoredTheme() {
+  return localStorage.getItem("theme") || "auto";
+}
+
+function setTheme(theme) {
+  localStorage.setItem("theme", theme);
+
+  // Remove all theme classes
+  document.body.classList.remove("theme-light", "theme-dark");
+
+  // Apply theme
+  if (theme === "light") {
+    document.body.classList.add("theme-light");
+  } else if (theme === "dark") {
+    document.body.classList.add("theme-dark");
+  }
+  // auto = no class, uses prefers-color-scheme
+
+  // Update icon
+  themeIcon.setAttribute("data-lucide", THEME_ICONS[theme]);
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
+}
+
+function cycleTheme() {
+  const current = getStoredTheme();
+  const currentIndex = THEMES.indexOf(current);
+  const nextIndex = (currentIndex + 1) % THEMES.length;
+  const nextTheme = THEMES[nextIndex];
+  setTheme(nextTheme);
+}
+
+// Initialize theme
+setTheme(getStoredTheme());
+
+themeToggleBtn.addEventListener("click", () => {
+  cycleTheme();
 });
 
 load();
