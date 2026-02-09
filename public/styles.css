@@ -1001,17 +1001,15 @@ button i {
 .btn-favorite-list .star-icon {
   width: 20px;
   height: 20px;
-  color: var(--text-secondary);
+  color: #fbbf24;
   fill: none;
-  stroke: currentColor;
   stroke-width: 2;
   transition: all var(--transition-base);
 }
 
-.btn-favorite-list .star-filled {
+.btn-favorite-list .star-icon.star-filled {
   fill: #fbbf24;
-  color: #fbbf24;
-  stroke: #fbbf24;
+  stroke: #f59e0b;
 }
 
 /* ========================================
