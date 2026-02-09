@@ -4,6 +4,7 @@ const empty = document.getElementById("empty");
 const appId = document.getElementById("app-id");
 const nameInput = document.getElementById("name");
 const urlInput = document.getElementById("url");
+const imageInput = document.getElementById("image");
 const cancelBtn = document.getElementById("cancel-btn");
 const formTitle = document.getElementById("form-title");
 const saveBtn = document.getElementById("save-btn");
@@ -30,6 +31,7 @@ function resetForm() {
   saveBtn.textContent = "Save";
   cancelBtn.hidden = true;
   form.reset();
+  imageInput.value = "";
 }
 
 function renderApps(apps) {
@@ -39,6 +41,7 @@ function renderApps(apps) {
   apps.forEach((app) => {
     const node = template.content.cloneNode(true);
     const item = node.querySelector(".app-item");
+    const thumb = node.querySelector(".app-thumb");
     const name = node.querySelector(".app-name");
     const link = node.querySelector(".app-url");
     const openBtn = node.querySelector(".open");
@@ -48,6 +51,13 @@ function renderApps(apps) {
     name.textContent = app.name;
     link.textContent = app.url;
     link.href = app.url;
+
+    if (app.image_url) {
+      thumb.src = app.image_url;
+      thumb.hidden = false;
+    } else {
+      thumb.hidden = true;
+    }
 
     openBtn.addEventListener("click", () => {
       window.open(app.url, "_blank", "noopener");
@@ -80,24 +90,27 @@ async function load() {
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const payload = {
-    name: nameInput.value.trim(),
-    url: normalizeUrl(urlInput.value),
-  };
-  if (!payload.name || !payload.url) return;
+  const name = nameInput.value.trim();
+  const url = normalizeUrl(urlInput.value);
+  if (!name || !url) return;
+
+  const payload = new FormData();
+  payload.append("name", name);
+  payload.append("url", url);
+  if (imageInput.files[0]) {
+    payload.append("image", imageInput.files[0]);
+  }
 
   const id = appId.value;
   if (id) {
     await fetch(`/api/apps/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: payload,
     });
   } else {
     await fetch("/api/apps", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: payload,
     });
   }
 

@@ -110,6 +110,21 @@ button.danger {
   background: #fffdf9;
 }
 
+.app-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: #f0ebe2;
+  border: 1px solid #e6e1d9;
+}
+
 .app-name {
   margin: 0 0 6px;
   font-size: 1.2rem;

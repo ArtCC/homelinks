@@ -18,6 +18,14 @@ db.serialize(() => {
     "created_at TEXT DEFAULT CURRENT_TIMESTAMP" +
     ")"
   );
+
+  db.all("PRAGMA table_info(apps)", (err, rows) => {
+    if (err) return;
+    const hasImage = rows.some((row) => row.name === "image_url");
+    if (!hasImage) {
+      db.run("ALTER TABLE apps ADD COLUMN image_url TEXT");
+    }
+  });
 });
 
 function run(sql, params = []) {
@@ -40,21 +48,29 @@ function all(sql, params = []) {
 
 module.exports = {
   async listApps() {
-    return all("SELECT id, name, url, created_at FROM apps ORDER BY id DESC");
+    return all(
+      "SELECT id, name, url, image_url, created_at FROM apps ORDER BY id DESC"
+    );
   },
-  async createApp(name, url) {
-    const result = await run("INSERT INTO apps (name, url) VALUES (?, ?)", [
-      name,
-      url,
-    ]);
+  async getAppById(id) {
+    const rows = await all(
+      "SELECT id, name, url, image_url FROM apps WHERE id = ?",
+      [id]
+    );
+    return rows[0] || null;
+  },
+  async createApp(name, url, imageUrl = null) {
+    const result = await run(
+      "INSERT INTO apps (name, url, image_url) VALUES (?, ?, ?)",
+      [name, url, imageUrl]
+    );
     return result.id;
   },
-  async updateApp(id, name, url) {
-    return run("UPDATE apps SET name = ?, url = ? WHERE id = ?", [
-      name,
-      url,
-      id,
-    ]);
+  async updateApp(id, name, url, imageUrl = null) {
+    return run(
+      "UPDATE apps SET name = ?, url = ?, image_url = COALESCE(?, image_url) WHERE id = ?",
+      [name, url, imageUrl, id]
+    );
   },
   async deleteApp(id) {
     return run("DELETE FROM apps WHERE id = ?", [id]);
