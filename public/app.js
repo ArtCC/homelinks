@@ -165,6 +165,15 @@ function showForm() {
   nameInput.focus();
 }
 
+function setOptionalField(element, value) {
+  if (value) {
+    element.textContent = value;
+    element.hidden = false;
+  } else {
+    element.hidden = true;
+  }
+}
+
 function renderApps(apps) {
   list.innerHTML = "";
 
@@ -215,21 +224,9 @@ function renderApps(apps) {
     link.textContent = app.url;
     link.href = app.url;
 
-    // Display category if exists
-    if (app.category) {
-      category.textContent = app.category;
-      category.hidden = false;
-    } else {
-      category.hidden = true;
-    }
-
-    // Display description if exists
-    if (app.description) {
-      description.textContent = app.description;
-      description.hidden = false;
-    } else {
-      description.hidden = true;
-    }
+    // Display category and description if they exist
+    setOptionalField(category, app.category);
+    setOptionalField(description, app.description);
 
     if (app.image_url) {
       thumb.src = app.image_url;

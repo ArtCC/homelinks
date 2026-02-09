@@ -93,7 +93,7 @@ module.exports = {
   },
   async getCategories() {
     const rows = await all(
-      "SELECT DISTINCT category FROM apps WHERE category IS NOT NULL AND category != '' ORDER BY category COLLATE NOCASE ASC"
+      "SELECT DISTINCT category FROM apps WHERE category IS NOT NULL ORDER BY category COLLATE NOCASE ASC"
     );
     return rows.map(row => row.category);
   },
