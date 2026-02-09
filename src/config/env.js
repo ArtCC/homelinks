@@ -2,7 +2,7 @@ const path = require("path");
 
 require("dotenv").config();
 
-const baseDir = path.join(__dirname, "..");
+const baseDir = path.join(__dirname, "..", "..");
 const port = process.env.PORT || 9500;
 const uploadDir = process.env.UPLOAD_DIR || path.join(baseDir, "data", "uploads");
 const maxImageSize = parseInt(process.env.MAX_IMAGE_SIZE) || 1024;
