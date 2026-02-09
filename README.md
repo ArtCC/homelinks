@@ -1,3 +1,5 @@
+<img src="public/favicon.svg" width="40" height="40" alt="Homelinks" align="left"> 
+
 # Homelinks
 
 Keep all your Docker services organized in one place. A modern, self-hosted dashboard designed for Docker deployments. Quick access to your apps with a clean UI, favorites, dark mode, and persistent SQLite storage.
@@ -15,15 +17,19 @@ Keep all your Docker services organized in one place. A modern, self-hosted dash
 - **Collapsible form** - Clean interface when not editing
 
 ### UI/UX
+- **Grid & List views** - Toggle between card grid (default) and compact list layout
+- **View persistence** - Your layout preference is remembered
 - **Modern grid layout** - Responsive cards (3 cols → 2 → 1)
 - **Dark mode** - Auto/Light/Dark theme selector with persistence
 - **Smooth animations** - Fade-in, scale, hover effects
 - **Empty states** - Contextual messages for no apps vs no search results
 - **Loading states** - Visual feedback for all operations
+- **Pagination** - 6 apps per page with navigation controls
 
 ### Technical
 - **SQLite persistence** - No external database needed
 - **Docker-first** - Ready for Docker/Portainer deployment
+- **Session persistence** - Login lasts 30 days across browser restarts
 - **Rate limiting** - Protection against brute force (5 attempts/15min)
 - **Timing-attack protection** - Secure credential comparison
 - **URL validation** - Only valid HTTP/HTTPS
@@ -186,7 +192,7 @@ sudo chmod 775 /opt/docker/homelinks/data
 - **Timing-attack protection**: Uses `crypto.timingSafeEqual` for credential comparison
 - **URL validation**: Only valid HTTP/HTTPS URLs are accepted
 - **Image validation**: Size, dimensions, and format checks
-- **Session security**: HttpOnly cookies with SameSite protection
+- **Session security**: HttpOnly cookies with SameSite protection (30-day duration)
 - **SQL injection prevention**: Prepared statements in all database queries
 - **Graceful shutdown**: Proper database connection cleanup on termination
 
