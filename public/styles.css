@@ -1001,11 +1001,13 @@ button i {
 .btn-favorite-list .star-icon {
   width: 20px;
   height: 20px;
+  stroke: currentColor;
 }
 
 .btn-favorite-list .star-filled {
   fill: #fbbf24;
   color: #fbbf24;
+  stroke: #fbbf24;
 }
 
 /* ========================================
