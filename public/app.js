@@ -29,7 +29,7 @@ const themeToggleBtn = document.getElementById("theme-toggle-btn");
 
 const maxImageBytes = 1 * 1024 * 1024;
 const maxImageSize = 1024;
-const pageSize = 10;
+const pageSize = 6;
 
 let allApps = [];
 let currentPage = 1;
