@@ -26,7 +26,7 @@ const emptyIcon = document.getElementById("empty-icon");
 const emptyMessage = document.getElementById("empty-message");
 const emptyHint = document.getElementById("empty-hint");
 const themeToggleBtn = document.getElementById("theme-toggle-btn");
-const themeIcon = document.getElementById("theme-icon");
+let themeIcon = document.getElementById("theme-icon");
 
 const maxImageBytes = 1 * 1024 * 1024;
 const maxImageSize = 1024;
@@ -430,8 +430,16 @@ function setTheme(theme) {
   }
   // auto = no class, uses prefers-color-scheme
 
-  // Update icon
-  themeIcon.setAttribute("data-lucide", THEME_ICONS[theme]);
+  // Update icon - replace the element to force re-render
+  const iconName = THEME_ICONS[theme];
+  const newIcon = document.createElement("i");
+  newIcon.setAttribute("data-lucide", iconName);
+  newIcon.id = "theme-icon";
+  themeIcon.parentNode.replaceChild(newIcon, themeIcon);
+
+  // Update the reference to the new element
+  themeIcon = newIcon;
+
   if (typeof lucide !== 'undefined') {
     lucide.createIcons();
   }

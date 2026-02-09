@@ -11,6 +11,19 @@
 </head>
 
 <body>
+  <script>
+    // Apply theme before render to avoid flash
+    (function () {
+      const theme = localStorage.getItem("theme") || "auto";
+      if (theme === "light") {
+        document.body.classList.add("theme-light");
+      } else if (theme === "dark") {
+        document.body.classList.add("theme-dark");
+      }
+      // auto = no class, uses prefers-color-scheme
+    })();
+  </script>
+
   <main class="container auth-container">
     <header class="header auth-header">
       <h1>
