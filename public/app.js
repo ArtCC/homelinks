@@ -4,6 +4,8 @@ const empty = document.getElementById("empty");
 const appId = document.getElementById("app-id");
 const nameInput = document.getElementById("name");
 const urlInput = document.getElementById("url");
+const categoryInput = document.getElementById("category");
+const descriptionInput = document.getElementById("description");
 const imageInput = document.getElementById("image");
 const imagePreview = document.getElementById("image-preview");
 const previewImg = document.getElementById("preview-img");
@@ -15,6 +17,8 @@ const template = document.getElementById("app-item-template");
 const logoutBtn = document.getElementById("logout-btn");
 const formError = document.getElementById("form-error");
 const searchInput = document.getElementById("search");
+const categoryFilter = document.getElementById("category-filter");
+const categorySuggestions = document.getElementById("category-suggestions");
 const countLabel = document.getElementById("count");
 const pagination = document.getElementById("pagination");
 const prevPageBtn = document.getElementById("prev-page");
@@ -56,6 +60,41 @@ async function fetchApps() {
   return response.json();
 }
 
+async function fetchCategories() {
+  try {
+    const response = await fetch("/api/apps/categories");
+    if (response.ok) {
+      return response.json();
+    }
+  } catch (err) {
+    console.error("Failed to fetch categories:", err);
+  }
+  return [];
+}
+
+function updateCategorySuggestions(categories) {
+  categorySuggestions.innerHTML = "";
+  categories.forEach((cat) => {
+    const option = document.createElement("option");
+    option.value = cat;
+    categorySuggestions.appendChild(option);
+  });
+}
+
+function updateCategoryFilter(categories) {
+  const currentValue = categoryFilter.value;
+  categoryFilter.innerHTML = '<option value="">All categories</option>';
+  categories.forEach((cat) => {
+    const option = document.createElement("option");
+    option.value = cat;
+    option.textContent = cat;
+    categoryFilter.appendChild(option);
+  });
+  if (categories.includes(currentValue)) {
+    categoryFilter.value = currentValue;
+  }
+}
+
 function setFormError(message) {
   formError.textContent = message;
   formError.hidden = !message;
@@ -86,8 +125,25 @@ function renderPagination(totalItems, totalPages) {
 
 function getFilteredApps() {
   const query = searchInput.value.trim().toLowerCase();
-  if (!query) return allApps;
-  return allApps.filter((app) => app.name.toLowerCase().includes(query));
+  const selectedCategory = categoryFilter.value.trim();
+  
+  let filtered = allApps;
+  
+  // Filter by category
+  if (selectedCategory) {
+    filtered = filtered.filter((app) => app.category === selectedCategory);
+  }
+  
+  // Filter by search query (name, url, or description)
+  if (query) {
+    filtered = filtered.filter((app) => 
+      app.name.toLowerCase().includes(query) ||
+      app.url.toLowerCase().includes(query) ||
+      (app.description && app.description.toLowerCase().includes(query))
+    );
+  }
+  
+  return filtered;
 }
 
 function resetForm() {
@@ -96,6 +152,8 @@ function resetForm() {
   saveBtn.textContent = "Save";
   form.reset();
   imageInput.value = "";
+  categoryInput.value = "";
+  descriptionInput.value = "";
   imagePreview.hidden = true;
   previewImg.src = "";
   setFormError("");
@@ -145,6 +203,8 @@ function renderApps(apps) {
     const thumb = node.querySelector(isListView ? ".list-item-thumbnail" : ".app-thumbnail");
     const name = node.querySelector(isListView ? ".list-item-name" : ".app-name");
     const link = node.querySelector(isListView ? ".list-item-url" : ".app-url");
+    const category = node.querySelector(isListView ? ".list-item-category" : ".app-category");
+    const description = node.querySelector(isListView ? ".list-item-description" : ".app-description");
     const openBtn = node.querySelector(".open");
     const editBtn = node.querySelector(".edit");
     const deleteBtn = node.querySelector(".delete");
@@ -154,6 +214,22 @@ function renderApps(apps) {
     name.textContent = app.name;
     link.textContent = app.url;
     link.href = app.url;
+
+    // Display category if exists
+    if (app.category) {
+      category.textContent = app.category;
+      category.hidden = false;
+    } else {
+      category.hidden = true;
+    }
+
+    // Display description if exists
+    if (app.description) {
+      description.textContent = app.description;
+      description.hidden = false;
+    } else {
+      description.hidden = true;
+    }
 
     if (app.image_url) {
       thumb.src = app.image_url;
@@ -196,6 +272,8 @@ function renderApps(apps) {
       appId.value = app.id;
       nameInput.value = app.name;
       urlInput.value = app.url;
+      categoryInput.value = app.category || "";
+      descriptionInput.value = app.description || "";
       formTitle.textContent = "Edit app";
       saveBtn.textContent = "Update";
 
@@ -253,6 +331,9 @@ function renderApps(apps) {
 
 async function load() {
   allApps = await fetchApps();
+  const categories = await fetchCategories();
+  updateCategorySuggestions(categories);
+  updateCategoryFilter(categories);
   renderAndPaginate();
 }
 
@@ -295,6 +376,8 @@ form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const name = nameInput.value.trim();
   const url = normalizeUrl(urlInput.value);
+  const category = categoryInput.value.trim();
+  const description = descriptionInput.value.trim();
   if (!name || !url) return;
   if (lastImageError) return;
 
@@ -307,6 +390,12 @@ form.addEventListener("submit", async (event) => {
   const payload = new FormData();
   payload.append("name", name);
   payload.append("url", url);
+  if (category) {
+    payload.append("category", category);
+  }
+  if (description) {
+    payload.append("description", description);
+  }
   if (imageInput.files[0]) {
     payload.append("image", imageInput.files[0]);
   }
@@ -387,6 +476,11 @@ removePreviewBtn.addEventListener("click", () => {
 });
 
 searchInput.addEventListener("input", () => {
+  currentPage = 1;
+  renderAndPaginate();
+});
+
+categoryFilter.addEventListener("change", () => {
   currentPage = 1;
   renderAndPaginate();
 });

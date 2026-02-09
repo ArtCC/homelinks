@@ -29,8 +29,18 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/categories", async (req, res) => {
+  try {
+    const categories = await db.getCategories();
+    res.json(categories);
+  } catch (err) {
+    console.error("Failed to load categories:", err);
+    res.status(500).json({ error: "Failed to load categories" });
+  }
+});
+
 router.post("/", uploadImage, async (req, res) => {
-  const { name, url } = req.body || {};
+  const { name, url, category, description } = req.body || {};
   if (!name || !url) {
     return res.status(400).json({ error: "name and url are required" });
   }
@@ -50,7 +60,13 @@ router.post("/", uploadImage, async (req, res) => {
   }
 
   try {
-    const id = await db.createApp(name.trim(), url.trim(), imageUrl);
+    const id = await db.createApp(
+      name.trim(), 
+      url.trim(), 
+      imageUrl, 
+      category ? category.trim() : null,
+      description ? description.trim() : null
+    );
     res.status(201).json({ id });
   } catch (err) {
     if (imageUrl) removeUpload(imageUrl);
@@ -59,7 +75,7 @@ router.post("/", uploadImage, async (req, res) => {
 });
 
 router.put("/:id", uploadImage, async (req, res) => {
-  const { name, url } = req.body || {};
+  const { name, url, category, description } = req.body || {};
   const id = Number(req.params.id);
   if (!id || !name || !url) {
     return res.status(400).json({ error: "id, name and url are required" });
@@ -86,7 +102,14 @@ router.put("/:id", uploadImage, async (req, res) => {
       return res.status(404).json({ error: "app not found" });
     }
 
-    const result = await db.updateApp(id, name.trim(), url.trim(), imageUrl);
+    const result = await db.updateApp(
+      id, 
+      name.trim(), 
+      url.trim(), 
+      imageUrl,
+      category ? category.trim() : null,
+      description ? description.trim() : null
+    );
     if (result.changes === 0) {
       if (imageUrl) removeUpload(imageUrl);
       return res.status(404).json({ error: "app not found" });

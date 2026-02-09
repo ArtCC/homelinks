@@ -71,6 +71,15 @@
           <input type="text" id="url" placeholder="http://server:9000" required />
         </label>
         <label>
+          Category (optional)
+          <input type="text" id="category" placeholder="e.g., Media, Dev Tools, Monitoring" list="category-suggestions" />
+          <datalist id="category-suggestions"></datalist>
+        </label>
+        <label>
+          Description (optional)
+          <textarea id="description" placeholder="Add notes about this app..." rows="3"></textarea>
+        </label>
+        <label>
           Image (optional, max 1024x1024, 1MB)
           <input type="file" id="image" accept="image/png,image/jpeg,image/webp" />
           <div id="image-preview" class="image-preview" hidden>
@@ -95,6 +104,9 @@
       <div class="list-toolbar">
         <i data-lucide="search" class="search-icon"></i>
         <input type="search" id="search" placeholder="Search apps..." autocomplete="off" />
+        <select id="category-filter" class="category-filter">
+          <option value="">All categories</option>
+        </select>
         <span id="count" class="count"></span>
       </div>
       <div id="empty" class="empty" hidden>
@@ -131,6 +143,8 @@
       <div class="app-content">
         <h3 class="app-name"></h3>
         <a class="app-url" target="_blank" rel="noopener"></a>
+        <span class="app-category"></span>
+        <p class="app-description"></p>
       </div>
       <div class="app-actions">
         <button class="btn-primary open" title="Open in new tab">
@@ -158,6 +172,8 @@
       <div class="list-item-content">
         <h3 class="list-item-name"></h3>
         <a class="list-item-url" target="_blank" rel="noopener"></a>
+        <span class="list-item-category"></span>
+        <p class="list-item-description"></p>
       </div>
       <div class="list-item-actions">
         <button class="btn-favorite" title="Toggle favorite">
