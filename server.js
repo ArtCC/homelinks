@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const fs = require("fs");
+const morgan = require("morgan");
 const multer = require("multer");
 const path = require("path");
 const sharp = require("sharp");
@@ -16,6 +17,7 @@ const maxImageBytes = 1 * 1024 * 1024;
 fs.mkdirSync(uploadDir, { recursive: true });
 
 app.use(express.json());
+app.use(morgan("combined"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static(uploadDir));
 
@@ -164,6 +166,11 @@ app.delete("/api/apps/:id", async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: "Failed to delete app" });
   }
+});
+
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: "Unexpected server error" });
 });
 
 app.listen(port, () => {

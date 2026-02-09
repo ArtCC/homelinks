@@ -9,6 +9,21 @@ const cancelBtn = document.getElementById("cancel-btn");
 const formTitle = document.getElementById("form-title");
 const saveBtn = document.getElementById("save-btn");
 const template = document.getElementById("app-item-template");
+const formError = document.getElementById("form-error");
+const searchInput = document.getElementById("search");
+const countLabel = document.getElementById("count");
+const pagination = document.getElementById("pagination");
+const prevPageBtn = document.getElementById("prev-page");
+const nextPageBtn = document.getElementById("next-page");
+const pageInfo = document.getElementById("page-info");
+
+const maxImageBytes = 1 * 1024 * 1024;
+const maxImageSize = 1024;
+const pageSize = 10;
+
+let allApps = [];
+let currentPage = 1;
+let lastImageError = "";
 
 function normalizeUrl(url) {
   const trimmed = url.trim();
@@ -25,6 +40,40 @@ async function fetchApps() {
   return response.json();
 }
 
+function setFormError(message) {
+  formError.textContent = message;
+  formError.hidden = !message;
+  lastImageError = message;
+}
+
+function paginate(items) {
+  const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
+  if (currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage - 1) * pageSize;
+  const end = start + pageSize;
+  return {
+    pageItems: items.slice(start, end),
+    totalPages,
+  };
+}
+
+function renderPagination(totalItems, totalPages) {
+  if (totalItems <= pageSize) {
+    pagination.hidden = true;
+    return;
+  }
+  pagination.hidden = false;
+  pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+  prevPageBtn.disabled = currentPage === 1;
+  nextPageBtn.disabled = currentPage === totalPages;
+}
+
+function getFilteredApps() {
+  const query = searchInput.value.trim().toLowerCase();
+  if (!query) return allApps;
+  return allApps.filter((app) => app.name.toLowerCase().includes(query));
+}
+
 function resetForm() {
   appId.value = "";
   formTitle.textContent = "New app";
@@ -32,6 +81,7 @@ function resetForm() {
   cancelBtn.hidden = true;
   form.reset();
   imageInput.value = "";
+  setFormError("");
 }
 
 function renderApps(apps) {
@@ -84,8 +134,43 @@ function renderApps(apps) {
 }
 
 async function load() {
-  const apps = await fetchApps();
-  renderApps(apps);
+  allApps = await fetchApps();
+  renderAndPaginate();
+}
+
+function renderAndPaginate() {
+  const filtered = getFilteredApps();
+  const { pageItems, totalPages } = paginate(filtered);
+  renderApps(pageItems);
+  renderPagination(filtered.length, totalPages);
+  countLabel.textContent = `${filtered.length} app${filtered.length === 1 ? "" : "s"}`;
+}
+
+async function validateImageFile(file) {
+  if (file.size > maxImageBytes) {
+    return "Image must be <= 1MB";
+  }
+
+  const image = new Image();
+  const objectUrl = URL.createObjectURL(file);
+
+  try {
+    const dimensions = await new Promise((resolve, reject) => {
+      image.onload = () => resolve({ width: image.width, height: image.height });
+      image.onerror = () => reject(new Error("Invalid image"));
+      image.src = objectUrl;
+    });
+
+    if (dimensions.width > maxImageSize || dimensions.height > maxImageSize) {
+      return "Image must be max 1024x1024";
+    }
+  } catch (err) {
+    return "Invalid image file";
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+
+  return "";
 }
 
 form.addEventListener("submit", async (event) => {
@@ -93,6 +178,7 @@ form.addEventListener("submit", async (event) => {
   const name = nameInput.value.trim();
   const url = normalizeUrl(urlInput.value);
   if (!name || !url) return;
+  if (lastImageError) return;
 
   const payload = new FormData();
   payload.append("name", name);
@@ -120,6 +206,37 @@ form.addEventListener("submit", async (event) => {
 
 cancelBtn.addEventListener("click", () => {
   resetForm();
+});
+
+imageInput.addEventListener("change", async () => {
+  const file = imageInput.files[0];
+  if (!file) {
+    setFormError("");
+    return;
+  }
+
+  const message = await validateImageFile(file);
+  if (message) {
+    setFormError(message);
+    imageInput.value = "";
+  } else {
+    setFormError("");
+  }
+});
+
+searchInput.addEventListener("input", () => {
+  currentPage = 1;
+  renderAndPaginate();
+});
+
+prevPageBtn.addEventListener("click", () => {
+  currentPage = Math.max(1, currentPage - 1);
+  renderAndPaginate();
+});
+
+nextPageBtn.addEventListener("click", () => {
+  currentPage += 1;
+  renderAndPaginate();
 });
 
 load();

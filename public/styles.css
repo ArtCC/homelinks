@@ -65,6 +65,17 @@ input {
   font-size: 1rem;
 }
 
+input[type="search"] {
+  margin: 0;
+  background: #fffdf9;
+}
+
+.form-error {
+  margin: 6px 0 12px;
+  color: var(--danger);
+  font-weight: 600;
+}
+
 .form-actions {
   display: flex;
   gap: 12px;
@@ -97,6 +108,19 @@ button.danger {
   margin: 0;
   display: grid;
   gap: 16px;
+}
+
+.list-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.count {
+  color: var(--muted);
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .app-item {
@@ -142,12 +166,29 @@ button.danger {
   align-items: center;
 }
 
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.page-info {
+  color: var(--muted);
+  font-weight: 600;
+}
+
 .empty {
   color: var(--muted);
   padding: 12px 0;
 }
 
 @media (max-width: 600px) {
+  .list-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .app-actions {
     width: 100%;
     justify-content: flex-start;

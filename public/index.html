@@ -31,6 +31,7 @@
           Image (optional, max 1024x1024, 1MB)
           <input type="file" id="image" accept="image/png,image/jpeg,image/webp" />
         </label>
+        <div id="form-error" class="form-error" hidden></div>
         <div class="form-actions">
           <button type="submit" id="save-btn">Save</button>
           <button type="button" id="cancel-btn" class="ghost" hidden>
@@ -42,10 +43,19 @@
 
     <section class="list-card">
       <h2>Apps</h2>
+      <div class="list-toolbar">
+        <input type="search" id="search" placeholder="Search apps" autocomplete="off" />
+        <span id="count" class="count"></span>
+      </div>
       <div id="empty" class="empty" hidden>
         You do not have any apps yet. Add the first one above.
       </div>
       <ul id="apps" class="apps"></ul>
+      <div id="pagination" class="pagination" hidden>
+        <button type="button" id="prev-page" class="ghost">Prev</button>
+        <span id="page-info" class="page-info"></span>
+        <button type="button" id="next-page" class="ghost">Next</button>
+      </div>
     </section>
   </main>
 
