@@ -148,7 +148,7 @@ function renderApps(apps) {
     const openBtn = node.querySelector(".open");
     const editBtn = node.querySelector(".edit");
     const deleteBtn = node.querySelector(".delete");
-    const favoriteBtn = node.querySelector(isListView ? ".btn-favorite-list" : ".btn-favorite");
+    const favoriteBtn = node.querySelector(".btn-favorite");
     const starIcon = node.querySelector(".star-icon");
 
     name.textContent = app.name;

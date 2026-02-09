@@ -978,38 +978,27 @@ button i {
   flex-shrink: 0;
 }
 
-.btn-favorite-list {
+/* Favorite button override for list view */
+.list-item-actions .btn-favorite {
+  position: relative;
+  top: auto;
+  right: auto;
   width: 38px;
   height: 38px;
+  background: transparent;
   border: 2px solid var(--border-light);
   border-radius: var(--radius-md);
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  color: var(--text-secondary);
+  backdrop-filter: none;
 }
 
-.btn-favorite-list:hover {
+.list-item-actions .btn-favorite:hover {
   background: var(--bg-tertiary);
   border-color: var(--accent-primary);
-  transform: scale(1.1);
 }
 
-.btn-favorite-list .star-icon {
+.list-item-actions .btn-favorite .star-icon {
   width: 20px;
   height: 20px;
-  color: #fbbf24;
-  fill: none;
-  stroke-width: 2;
-  transition: all var(--transition-base);
-}
-
-.btn-favorite-list .star-icon.star-filled {
-  fill: #fbbf24;
-  stroke: #f59e0b;
 }
 
 /* ========================================
