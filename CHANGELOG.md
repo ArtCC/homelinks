@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.4] - 2026-02-10
+
+### Added
+
+- **Category system**: Organize apps with custom categories and tags
+- **Category filter**: Dropdown in toolbar to filter apps by category
+- **Category autocomplete**: Datalist suggestions from existing categories when adding/editing apps
+- **App descriptions**: Optional text field to add notes about each app
+- **Description display**: Shown in both grid (2-line clamp) and list (single line ellipsis) views
+- **Search by category**: Search now matches category in addition to name, URL, and description
+- **Input validation**: Category limited to 50 characters, description limited to 500 characters (both client and server)
+- New API endpoint: `GET /api/apps/categories` to list unique categories
+
+### Changed
+
+- Create and update endpoints now accept optional `category` and `description` fields
+- Database schema auto-migrates to add `category` and `description` columns
+- Empty string categories are excluded from category lists
+
+### Fixed
+
+- Case-insensitive category deduplication (e.g. "Media" and "media" are now treated as one)
+- Empty string categories no longer appear in filter or suggestions
+
 ## [0.0.3] - 2026-02-09
 
 ### Added

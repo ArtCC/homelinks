@@ -12,8 +12,10 @@ Keep all your Docker services organized in one place. A modern, self-hosted dash
 - **Favorites system** - Pin important apps to the top
 - **Category system** - Organize apps with custom categories/tags
 - **App descriptions** - Add notes and details about each app
-- **Search & filter** - Find apps by name, URL, description, or category
-- **Category filter** - Filter apps by category
+- **Search & filter** - Find apps by name, URL, category, or description
+- **Category filter** - Dropdown to filter apps by category
+- **Category autocomplete** - Suggests existing categories when typing
+- **Input validation** - Category max 50 chars, description max 500 chars
 - **Optional thumbnails** (jpg/png/webp, max 1024x1024, 1MB)
 - **Collapsible form** - Clean interface when not editing
 
@@ -35,6 +37,8 @@ Keep all your Docker services organized in one place. A modern, self-hosted dash
 - **Timing-attack protection** - Secure credential comparison
 - **URL validation** - Only valid HTTP/HTTPS
 - **Image validation** - Size, dimensions, and format checks
+- **Input length validation** - Server-side limits on category and description
+- **Auto-migration** - Database schema upgrades automatically on startup
 - **Graceful shutdown** - Clean database connection handling
 - **Health check endpoint** - Database connectivity verification
 
@@ -198,6 +202,7 @@ sudo chmod 775 /opt/docker/homelinks/data
 - **Timing-attack protection**: Uses `crypto.timingSafeEqual` for credential comparison
 - **URL validation**: Only valid HTTP/HTTPS URLs are accepted
 - **Image validation**: Size, dimensions, and format checks
+- **Input length validation**: Category (50 chars) and description (500 chars) limits enforced server-side
 - **Session security**: HttpOnly cookies with SameSite protection (30-day duration)
 - **SQL injection prevention**: Prepared statements in all database queries
 - **Graceful shutdown**: Proper database connection cleanup on termination
