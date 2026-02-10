@@ -30,6 +30,14 @@ db.serialize(() => {
     if (!hasFavorite) {
       db.run("ALTER TABLE apps ADD COLUMN favorite INTEGER DEFAULT 0");
     }
+    const hasCategory = rows.some((row) => row.name === "category");
+    if (!hasCategory) {
+      db.run("ALTER TABLE apps ADD COLUMN category TEXT");
+    }
+    const hasDescription = rows.some((row) => row.name === "description");
+    if (!hasDescription) {
+      db.run("ALTER TABLE apps ADD COLUMN description TEXT");
+    }
   });
 });
 
@@ -54,27 +62,27 @@ function all(sql, params = []) {
 module.exports = {
   async listApps() {
     return all(
-      "SELECT id, name, url, image_url, favorite, created_at FROM apps ORDER BY favorite DESC, name COLLATE NOCASE ASC"
+      "SELECT id, name, url, image_url, favorite, category, description, created_at FROM apps ORDER BY favorite DESC, name COLLATE NOCASE ASC"
     );
   },
   async getAppById(id) {
     const rows = await all(
-      "SELECT id, name, url, image_url, favorite FROM apps WHERE id = ?",
+      "SELECT id, name, url, image_url, favorite, category, description FROM apps WHERE id = ?",
       [id]
     );
     return rows[0] || null;
   },
-  async createApp(name, url, imageUrl = null) {
+  async createApp(name, url, imageUrl = null, category = null, description = null) {
     const result = await run(
-      "INSERT INTO apps (name, url, image_url, favorite) VALUES (?, ?, ?, 0)",
-      [name, url, imageUrl]
+      "INSERT INTO apps (name, url, image_url, favorite, category, description) VALUES (?, ?, ?, 0, ?, ?)",
+      [name, url, imageUrl, category, description]
     );
     return result.id;
   },
-  async updateApp(id, name, url, imageUrl = null) {
+  async updateApp(id, name, url, imageUrl = null, category = null, description = null) {
     return run(
-      "UPDATE apps SET name = ?, url = ?, image_url = COALESCE(?, image_url) WHERE id = ?",
-      [name, url, imageUrl, id]
+      "UPDATE apps SET name = ?, url = ?, image_url = COALESCE(?, image_url), category = ?, description = ? WHERE id = ?",
+      [name, url, imageUrl, category, description, id]
     );
   },
   async toggleFavorite(id) {
@@ -82,6 +90,12 @@ module.exports = {
       "UPDATE apps SET favorite = NOT favorite WHERE id = ?",
       [id]
     );
+  },
+  async getCategories() {
+    const rows = await all(
+      "SELECT DISTINCT category FROM apps WHERE category IS NOT NULL ORDER BY category COLLATE NOCASE ASC"
+    );
+    return rows.map(row => row.category);
   },
   async deleteApp(id) {
     return run("DELETE FROM apps WHERE id = ?", [id]);

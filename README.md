@@ -10,7 +10,10 @@ Keep all your Docker services organized in one place. A modern, self-hosted dash
 - **Quick access dashboard** for all your Docker services
 - **One-click open** in new tab
 - **Favorites system** - Pin important apps to the top
-- **Search & filter** - Find apps instantly
+- **Category system** - Organize apps with custom categories/tags
+- **App descriptions** - Add notes and details about each app
+- **Search & filter** - Find apps by name, URL, description, or category
+- **Category filter** - Filter apps by category
 - **Optional thumbnails** (jpg/png/webp, max 1024x1024, 1MB)
 - **Collapsible form** - Clean interface when not editing
 
@@ -208,8 +211,9 @@ sudo chmod 775 /opt/docker/homelinks/data
 
 ### Apps
 - `GET /api/apps` - List all apps (authenticated, ordered by favorite then name)
-- `POST /api/apps` - Create new app (authenticated, multipart form with `name`, `url`, optional `image`)
-- `PUT /api/apps/:id` - Update app (authenticated, multipart form with `name`, `url`, optional `image`)
+- `GET /api/apps/categories` - List all unique categories (authenticated)
+- `POST /api/apps` - Create new app (authenticated, multipart form with `name`, `url`, optional `image`, `category`, `description`)
+- `PUT /api/apps/:id` - Update app (authenticated, multipart form with `name`, `url`, optional `image`, `category`, `description`)
 - `PATCH /api/apps/:id/favorite` - Toggle favorite status (authenticated)
 - `DELETE /api/apps/:id` - Delete app (authenticated)
 
