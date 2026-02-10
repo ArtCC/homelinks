@@ -93,9 +93,15 @@ module.exports = {
   },
   async getCategories() {
     const rows = await all(
-      "SELECT DISTINCT category FROM apps WHERE category IS NOT NULL ORDER BY category COLLATE NOCASE ASC"
+      "SELECT DISTINCT category FROM apps WHERE category IS NOT NULL AND category != '' ORDER BY category COLLATE NOCASE ASC"
     );
-    return rows.map(row => row.category);
+    // Deduplicate case-insensitive (e.g. 'Media' and 'media')
+    const seen = new Map();
+    for (const row of rows) {
+      const key = row.category.toLowerCase();
+      if (!seen.has(key)) seen.set(key, row.category);
+    }
+    return Array.from(seen.values());
   },
   async deleteApp(id) {
     return run("DELETE FROM apps WHERE id = ?", [id]);

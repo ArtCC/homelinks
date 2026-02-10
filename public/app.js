@@ -126,23 +126,24 @@ function renderPagination(totalItems, totalPages) {
 function getFilteredApps() {
   const query = searchInput.value.trim().toLowerCase();
   const selectedCategory = categoryFilter.value.trim();
-  
+
   let filtered = allApps;
-  
+
   // Filter by category
   if (selectedCategory) {
     filtered = filtered.filter((app) => app.category === selectedCategory);
   }
-  
+
   // Filter by search query (name, url, or description)
   if (query) {
-    filtered = filtered.filter((app) => 
+    filtered = filtered.filter((app) =>
       app.name.toLowerCase().includes(query) ||
       app.url.toLowerCase().includes(query) ||
+      (app.category && app.category.toLowerCase().includes(query)) ||
       (app.description && app.description.toLowerCase().includes(query))
     );
   }
-  
+
   return filtered;
 }
 

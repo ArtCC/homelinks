@@ -49,6 +49,14 @@ router.post("/", uploadImage, async (req, res) => {
     return res.status(400).json({ error: "Invalid URL format" });
   }
 
+  if (category && category.trim().length > 50) {
+    return res.status(400).json({ error: "Category must be 50 characters or less" });
+  }
+
+  if (description && description.trim().length > 500) {
+    return res.status(400).json({ error: "Description must be 500 characters or less" });
+  }
+
   let imageUrl = null;
   if (req.file) {
     const isValid = await validateImage(req.file.path);
@@ -61,9 +69,9 @@ router.post("/", uploadImage, async (req, res) => {
 
   try {
     const id = await db.createApp(
-      name.trim(), 
-      url.trim(), 
-      imageUrl, 
+      name.trim(),
+      url.trim(),
+      imageUrl,
       category ? category.trim() : null,
       description ? description.trim() : null
     );
@@ -85,6 +93,14 @@ router.put("/:id", uploadImage, async (req, res) => {
     return res.status(400).json({ error: "Invalid URL format" });
   }
 
+  if (category && category.trim().length > 50) {
+    return res.status(400).json({ error: "Category must be 50 characters or less" });
+  }
+
+  if (description && description.trim().length > 500) {
+    return res.status(400).json({ error: "Description must be 500 characters or less" });
+  }
+
   let imageUrl = null;
   if (req.file) {
     const isValid = await validateImage(req.file.path);
@@ -103,9 +119,9 @@ router.put("/:id", uploadImage, async (req, res) => {
     }
 
     const result = await db.updateApp(
-      id, 
-      name.trim(), 
-      url.trim(), 
+      id,
+      name.trim(),
+      url.trim(),
       imageUrl,
       category ? category.trim() : null,
       description ? description.trim() : null

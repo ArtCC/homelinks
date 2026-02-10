@@ -72,12 +72,13 @@
         </label>
         <label>
           Category (optional)
-          <input type="text" id="category" placeholder="e.g., Media, Dev Tools, Monitoring" list="category-suggestions" />
+          <input type="text" id="category" placeholder="e.g., Media, Dev Tools, Monitoring" list="category-suggestions"
+            maxlength="50" />
           <datalist id="category-suggestions"></datalist>
         </label>
         <label>
           Description (optional)
-          <textarea id="description" placeholder="Add notes about this app..." rows="3"></textarea>
+          <textarea id="description" placeholder="Add notes about this app..." rows="3" maxlength="500"></textarea>
         </label>
         <label>
           Image (optional, max 1024x1024, 1MB)
