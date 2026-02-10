@@ -622,8 +622,7 @@ button i {
 .apps {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 380px));
-  justify-content: center;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
   margin: 0;
   padding: 0;
@@ -919,6 +918,7 @@ button i {
   transition: all var(--transition-base);
   animation: scaleIn var(--transition-base) ease-out;
   animation-fill-mode: backwards;
+  overflow: hidden;
 }
 
 .app-list-item:hover {
@@ -997,6 +997,7 @@ button i {
 .list-item-content {
   flex: 1;
   min-width: 0;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -1105,7 +1106,7 @@ button i {
   }
 
   .apps {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 380px));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 16px;
   }
 
