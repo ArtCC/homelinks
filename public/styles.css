@@ -287,7 +287,8 @@ body {
 .btn-add-app {
   width: 100%;
   max-width: 200px;
-  margin: 0 auto 24px;
+  margin: 0 0 24px;
+  align-self: flex-start;
   display: flex;
   align-items: center;
   justify-content: center;

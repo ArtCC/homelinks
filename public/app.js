@@ -40,6 +40,7 @@ const pageSize = 6;
 let allApps = [];
 let currentPage = 1;
 let lastImageError = "";
+let lastTotalPages = 1;
 
 function normalizeUrl(url) {
   const trimmed = url.trim();
@@ -118,7 +119,11 @@ function renderPagination(totalItems, totalPages) {
     return;
   }
   pagination.hidden = false;
-  pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+  lastTotalPages = totalPages;
+  const isNarrow = window.matchMedia("(max-width: 480px)").matches;
+  pageInfo.textContent = isNarrow
+    ? `${currentPage} of ${totalPages}`
+    : `Page ${currentPage} of ${totalPages}`;
   prevPageBtn.disabled = currentPage === 1;
   nextPageBtn.disabled = currentPage === totalPages;
 }
@@ -611,3 +616,12 @@ viewToggleBtn.addEventListener("click", () => {
 });
 
 load();
+
+window.addEventListener("resize", () => {
+  if (!pagination.hidden) {
+    const isNarrow = window.matchMedia("(max-width: 480px)").matches;
+    pageInfo.textContent = isNarrow
+      ? `${currentPage} of ${lastTotalPages}`
+      : `Page ${currentPage} of ${lastTotalPages}`;
+  }
+});
