@@ -209,8 +209,14 @@ function renderApps(apps) {
   const currentView = getStoredView();
   const currentTemplate = currentView === "list" ? listTemplate : template;
   const isListView = currentView === "list";
+  function appendSectionTitle(text) {
+    const title = document.createElement("li");
+    title.className = "apps-section-title";
+    title.textContent = text;
+    list.appendChild(title);
+  }
 
-  apps.forEach((app) => {
+  function renderApp(app) {
     const node = currentTemplate.content.cloneNode(true);
 
     // Selectors depending on view
@@ -324,7 +330,21 @@ function renderApps(apps) {
     });
 
     list.appendChild(item);
-  });
+  }
+
+  const favorites = apps.filter((app) => app.favorite);
+  const others = apps.filter((app) => !app.favorite);
+
+  if (favorites.length > 0) {
+    appendSectionTitle("Favorites");
+    favorites.forEach(renderApp);
+    if (others.length > 0) {
+      appendSectionTitle("Apps");
+    }
+    others.forEach(renderApp);
+  } else {
+    apps.forEach(renderApp);
+  }
 
   // Renderizar iconos de Lucide en los elementos dinámicos
   if (typeof lucide !== 'undefined') {

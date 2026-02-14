@@ -629,6 +629,16 @@ button i {
   padding: 0;
 }
 
+.apps-section-title {
+  grid-column: 1 / -1;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-tertiary);
+  margin: 4px 0 8px;
+}
+
 .app-card {
   background: var(--bg-secondary);
   border: 2px solid var(--border-light);
@@ -893,10 +903,11 @@ button i {
 .page-info {
   color: var(--text-secondary);
   font-weight: 600;
-  font-size: 0.95rem;
-  padding: 8px 16px;
+  font-size: clamp(0.75rem, 2.4vw, 0.95rem);
+  padding: clamp(4px, 1.2vw, 8px) clamp(8px, 2.4vw, 16px);
   background: var(--bg-tertiary);
   border-radius: var(--radius-full);
+  white-space: nowrap;
 }
 
 /* ========================================
@@ -907,6 +918,10 @@ button i {
   flex-direction: column;
   width: 100%;
   gap: 12px;
+}
+
+.apps.list-view .apps-section-title {
+  margin: 12px 0 4px;
 }
 
 .app-list-item {
@@ -1145,6 +1160,20 @@ button i {
 }
 
 @media (max-width: 480px) {
+  .pagination {
+    gap: 8px;
+  }
+
+  .pagination .btn-ghost {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+  }
+
+  .pagination .btn-ghost i {
+    width: 16px;
+    height: 16px;
+  }
+
   .apps {
     grid-template-columns: 1fr;
   }

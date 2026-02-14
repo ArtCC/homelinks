@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.6] - 2026-02-14
+
+### Added
+
+- Favorites section heading above the main list when favorites exist
+
+### Changed
+
+- Add app button aligned to the left
+- Pagination adapts on narrow screens (short label + tighter buttons)
+
+### Fixed
+
+- List view layout no longer expands when description text is present
+- List view description wraps/clamps without affecting container width
+
 ## [0.0.5] - 2026-02-11
 
 ### Changed

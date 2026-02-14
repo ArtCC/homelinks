@@ -10,6 +10,7 @@ Keep all your Docker services organized in one place. A modern, self-hosted dash
 - **Quick access dashboard** for all your Docker services
 - **One-click open** in new tab
 - **Favorites system** - Pin important apps to the top
+- **Favorites section** - Favorites grouped above the main list
 - **Category system** - Organize apps with custom categories/tags
 - **App descriptions** - Add notes and details about each app
 - **Search & filter** - Find apps by name, URL, category, or description
@@ -28,6 +29,7 @@ Keep all your Docker services organized in one place. A modern, self-hosted dash
 - **Empty states** - Contextual messages for no apps vs no search results
 - **Loading states** - Visual feedback for all operations
 - **Pagination** - 6 apps per page with navigation controls
+- **Responsive pagination** - Compact label and controls on narrow screens
 
 ### Technical
 - **SQLite persistence** - No external database needed
