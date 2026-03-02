@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.7] - 2026-03-02
+
+### Added
+
+- Backup export/import in ZIP format from the dashboard header
+- New API endpoint: `GET /api/apps/export` (full backup as ZIP)
+- New API endpoint: `POST /api/apps/import` (replace-all restore from ZIP, max 50MB)
+- Backup ZIP format with `apps.json` and `uploads/` images folder
+- In-app toast notifications for export/import and delete operations
+
+### Changed
+
+- Categories are now normalized to uppercase when creating/updating apps
+- Categories are returned uppercase in API responses and UI display
+- Existing categories are auto-normalized to uppercase on startup migration
+- Category ordering is now strict alphabetical by uppercase value
+
+### Fixed
+
+- Consistent non-blocking feedback by replacing remaining modal alerts in main app flows
+
 ## [0.0.6] - 2026-02-14
 
 ### Added
