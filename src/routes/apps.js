@@ -22,7 +22,11 @@ function isValidUrl(string) {
 router.get("/", async (req, res) => {
   try {
     const apps = await db.listApps();
-    res.json(apps);
+    const normalizedApps = apps.map((app) => ({
+      ...app,
+      category: app.category ? app.category.toUpperCase() : app.category,
+    }));
+    res.json(normalizedApps);
   } catch (err) {
     console.error("Failed to load apps:", err);
     res.status(500).json({ error: "Failed to load apps" });
@@ -32,7 +36,12 @@ router.get("/", async (req, res) => {
 router.get("/categories", async (req, res) => {
   try {
     const categories = await db.getCategories();
-    res.json(categories);
+    const normalizedCategories = [...new Set(
+      categories
+        .filter((category) => typeof category === "string" && category.trim() !== "")
+        .map((category) => category.toUpperCase())
+    )];
+    res.json(normalizedCategories);
   } catch (err) {
     console.error("Failed to load categories:", err);
     res.status(500).json({ error: "Failed to load categories" });
@@ -41,6 +50,7 @@ router.get("/categories", async (req, res) => {
 
 router.post("/", uploadImage, async (req, res) => {
   const { name, url, category, description } = req.body || {};
+  const normalizedCategory = category ? category.trim().toUpperCase() : null;
   if (!name || !url) {
     return res.status(400).json({ error: "name and url are required" });
   }
@@ -72,7 +82,7 @@ router.post("/", uploadImage, async (req, res) => {
       name.trim(),
       url.trim(),
       imageUrl,
-      category ? category.trim() : null,
+      normalizedCategory,
       description ? description.trim() : null
     );
     res.status(201).json({ id });
@@ -84,6 +94,7 @@ router.post("/", uploadImage, async (req, res) => {
 
 router.put("/:id", uploadImage, async (req, res) => {
   const { name, url, category, description } = req.body || {};
+  const normalizedCategory = category ? category.trim().toUpperCase() : null;
   const id = Number(req.params.id);
   if (!id || !name || !url) {
     return res.status(400).json({ error: "id, name and url are required" });
@@ -123,7 +134,7 @@ router.put("/:id", uploadImage, async (req, res) => {
       name.trim(),
       url.trim(),
       imageUrl,
-      category ? category.trim() : null,
+      normalizedCategory,
       description ? description.trim() : null
     );
     if (result.changes === 0) {

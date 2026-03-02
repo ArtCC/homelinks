@@ -38,6 +38,10 @@ db.serialize(() => {
     if (!hasDescription) {
       db.run("ALTER TABLE apps ADD COLUMN description TEXT");
     }
+
+    db.run(
+      "UPDATE apps SET category = UPPER(TRIM(category)) WHERE category IS NOT NULL AND category != ''"
+    );
   });
 });
 
@@ -93,7 +97,7 @@ module.exports = {
   },
   async getCategories() {
     const rows = await all(
-      "SELECT DISTINCT category FROM apps WHERE category IS NOT NULL AND category != '' ORDER BY category COLLATE NOCASE ASC"
+      "SELECT DISTINCT category FROM apps WHERE category IS NOT NULL AND category != '' ORDER BY UPPER(category) ASC"
     );
     // Deduplicate case-insensitive (e.g. 'Media' and 'media')
     const seen = new Map();
