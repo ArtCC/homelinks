@@ -95,6 +95,30 @@ module.exports = {
       [id]
     );
   },
+  async replaceAllApps(apps) {
+    await run("BEGIN TRANSACTION");
+    try {
+      await run("DELETE FROM apps");
+      for (const app of apps) {
+        await run(
+          "INSERT INTO apps (name, url, image_url, favorite, category, description, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+          [
+            app.name,
+            app.url,
+            app.image_url || null,
+            app.favorite ? 1 : 0,
+            app.category || null,
+            app.description || null,
+            app.created_at || new Date().toISOString(),
+          ]
+        );
+      }
+      await run("COMMIT");
+    } catch (err) {
+      await run("ROLLBACK");
+      throw err;
+    }
+  },
   async getCategories() {
     const rows = await all(
       "SELECT DISTINCT category FROM apps WHERE category IS NOT NULL AND category != '' ORDER BY UPPER(category) ASC"

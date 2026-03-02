@@ -46,6 +46,15 @@
         <button id="theme-toggle-btn" class="btn-ghost" title="Toggle theme">
           <i data-lucide="monitor" id="theme-icon"></i>
         </button>
+        <button id="export-btn" class="btn-ghost" title="Export backup">
+          <i data-lucide="download"></i>
+          <span>Export</span>
+        </button>
+        <button id="import-btn" class="btn-ghost" title="Import backup">
+          <i data-lucide="upload"></i>
+          <span>Import</span>
+        </button>
+        <input type="file" id="import-zip-input" accept=".zip,application/zip" hidden />
         <button id="logout-btn" class="btn-ghost">
           <i data-lucide="log-out"></i>
           <span>Logout</span>
@@ -129,6 +138,8 @@
       </div>
     </section>
   </main>
+
+  <div id="toast" class="toast" hidden role="status" aria-live="polite"></div>
 
   <template id="app-item-template">
     <li class="app-card">

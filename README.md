@@ -16,6 +16,7 @@ Keep all your Docker services organized in one place. A modern, self-hosted dash
 - **Search & filter** - Find apps by name, URL, category, or description
 - **Category filter** - Dropdown to filter apps by category
 - **Category autocomplete** - Suggests existing categories when typing
+- **Backup export/import (ZIP)** - Full backup with JSON + uploaded images
 - **Input validation** - Category max 50 chars, description max 500 chars
 - **Optional thumbnails** (jpg/png/webp, max 1024x1024, 1MB)
 - **Collapsible form** - Clean interface when not editing
@@ -40,6 +41,7 @@ Keep all your Docker services organized in one place. A modern, self-hosted dash
 - **URL validation** - Only valid HTTP/HTTPS
 - **Image validation** - Size, dimensions, and format checks
 - **Input length validation** - Server-side limits on category and description
+- **Backup validation** - ZIP import validation (structure, size, and image checks)
 - **Auto-migration** - Database schema upgrades automatically on startup
 - **Graceful shutdown** - Clean database connection handling
 - **Health check endpoint** - Database connectivity verification
@@ -223,6 +225,20 @@ sudo chmod 775 /opt/docker/homelinks/data
 - `PUT /api/apps/:id` - Update app (authenticated, multipart form with `name`, `url`, optional `image`, `category`, `description`)
 - `PATCH /api/apps/:id/favorite` - Toggle favorite status (authenticated)
 - `DELETE /api/apps/:id` - Delete app (authenticated)
+- `GET /api/apps/export` - Export full backup as ZIP (authenticated)
+- `POST /api/apps/import` - Import full backup from ZIP and replace all existing apps/images (authenticated, max 50MB)
+
+### Backup format (ZIP)
+
+Export creates a ZIP file with:
+- `apps.json` - Metadata + apps array
+- `uploads/` - App images referenced by `image_url`
+
+Import behavior:
+- **Replace all mode**: current apps are replaced by the backup content
+- Existing uploads from previous apps are removed after successful import
+- ZIP size limit: **50MB**
+- Image rules remain enforced (jpg/png/webp, max 1024x1024, 1MB each)
 
 ## 🩺 Health check
 

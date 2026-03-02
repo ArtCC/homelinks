@@ -32,6 +32,10 @@ const emptyHint = document.getElementById("empty-hint");
 const themeToggleBtn = document.getElementById("theme-toggle-btn");
 const viewToggleBtn = document.getElementById("view-toggle-btn");
 const listTemplate = document.getElementById("app-list-item-template");
+const exportBtn = document.getElementById("export-btn");
+const importBtn = document.getElementById("import-btn");
+const importZipInput = document.getElementById("import-zip-input");
+const toast = document.getElementById("toast");
 
 const maxImageBytes = 1 * 1024 * 1024;
 const maxImageSize = 1024;
@@ -41,6 +45,21 @@ let allApps = [];
 let currentPage = 1;
 let lastImageError = "";
 let lastTotalPages = 1;
+let toastTimeout = null;
+
+function showToast(message, type = "success") {
+  if (!toast) return;
+  if (toastTimeout) {
+    clearTimeout(toastTimeout);
+  }
+  toast.textContent = message;
+  toast.classList.remove("toast-success", "toast-error");
+  toast.classList.add(type === "error" ? "toast-error" : "toast-success");
+  toast.hidden = false;
+  toastTimeout = setTimeout(() => {
+    toast.hidden = true;
+  }, 3200);
+}
 
 function normalizeUrl(url) {
   const trimmed = url.trim();
@@ -71,6 +90,57 @@ async function fetchCategories() {
     console.error("Failed to fetch categories:", err);
   }
   return [];
+}
+
+function getDownloadFileName(contentDisposition, fallback) {
+  if (!contentDisposition) return fallback;
+  const match = contentDisposition.match(/filename="?([^";]+)"?/i);
+  if (!match || !match[1]) return fallback;
+  return match[1];
+}
+
+async function exportBackup() {
+  const response = await fetch("/api/apps/export");
+  if (response.status === 401) {
+    window.location.href = "/login.html";
+    return;
+  }
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.error || "Failed to export backup");
+  }
+
+  const blob = await response.blob();
+  const fallback = `homelinks-backup-${new Date().toISOString().replace(/[:.]/g, "-")}.zip`;
+  const filename = getDownloadFileName(response.headers.get("content-disposition"), fallback);
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+}
+
+async function importBackup(file) {
+  const payload = new FormData();
+  payload.append("backup", file);
+
+  const response = await fetch("/api/apps/import", {
+    method: "POST",
+    body: payload,
+  });
+
+  if (response.status === 401) {
+    window.location.href = "/login.html";
+    return;
+  }
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.error || "Failed to import backup");
+  }
 }
 
 function updateCategorySuggestions(categories) {
@@ -316,13 +386,14 @@ function renderApps(apps) {
         }
         if (!response.ok) {
           const data = await response.json().catch(() => ({}));
-          alert(data.error || "Failed to delete app");
+          showToast(data.error || "Failed to delete app", "error");
           return;
         }
         await load();
+        showToast("App deleted successfully", "success");
       } catch (err) {
         console.error("Error deleting app:", err);
-        alert("Network error, please try again");
+        showToast("Network error, please try again", "error");
       } finally {
         deleteBtn.disabled = false;
         deleteBtn.textContent = originalText;
@@ -528,6 +599,67 @@ if (logoutBtn) {
 addAppBtn.addEventListener("click", () => {
   showForm();
 });
+
+if (exportBtn) {
+  exportBtn.addEventListener("click", async () => {
+    exportBtn.disabled = true;
+    const originalText = exportBtn.innerHTML;
+    exportBtn.innerHTML = '<span>Exporting...</span>';
+    try {
+      await exportBackup();
+      showToast("Backup exported successfully", "success");
+    } catch (err) {
+      showToast(err.message || "Failed to export backup", "error");
+    } finally {
+      exportBtn.disabled = false;
+      exportBtn.innerHTML = originalText;
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+    }
+  });
+}
+
+if (importBtn && importZipInput) {
+  importBtn.addEventListener("click", () => {
+    importZipInput.value = "";
+    importZipInput.click();
+  });
+
+  importZipInput.addEventListener("change", async () => {
+    const file = importZipInput.files[0];
+    if (!file) return;
+
+    const confirmed = confirm(
+      "This will replace all current apps and images with the ZIP backup. Continue?"
+    );
+    if (!confirmed) {
+      importZipInput.value = "";
+      return;
+    }
+
+    importBtn.disabled = true;
+    const originalText = importBtn.innerHTML;
+    importBtn.innerHTML = '<span>Importing...</span>';
+
+    try {
+      await importBackup(file);
+      resetForm();
+      currentPage = 1;
+      await load();
+      showToast("Backup imported successfully", "success");
+    } catch (err) {
+      showToast(err.message || "Failed to import backup", "error");
+    } finally {
+      importBtn.disabled = false;
+      importBtn.innerHTML = originalText;
+      importZipInput.value = "";
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+    }
+  });
+}
 
 // Theme management
 const THEMES = ["auto", "light", "dark"];
