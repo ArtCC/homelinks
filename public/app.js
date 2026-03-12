@@ -433,9 +433,15 @@ async function load() {
 
 function renderAndPaginate() {
   const filtered = getFilteredApps();
-  const { pageItems, totalPages } = paginate(filtered);
-  renderApps(pageItems);
-  renderPagination(filtered.length, totalPages);
+  const favorites = filtered.filter((app) => app.favorite);
+  const nonFavorites = filtered.filter((app) => !app.favorite);
+  const { pageItems: nonFavoritePageItems, totalPages } = paginate(nonFavorites);
+  const visibleApps = favorites.length > 0
+    ? [...favorites, ...nonFavoritePageItems]
+    : nonFavoritePageItems;
+
+  renderApps(visibleApps);
+  renderPagination(nonFavorites.length, totalPages);
   countLabel.textContent = `${filtered.length} app${filtered.length === 1 ? "" : "s"}`;
 }
 
