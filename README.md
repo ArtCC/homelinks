@@ -74,6 +74,7 @@ ADMIN_EMAIL=your@email.com
 ADMIN_PASSWORD=your_secure_password
 SESSION_SECRET=your_generated_secret_here
 COOKIE_SECURE=false
+TRUST_PROXY=false
 ```
 
 2. **Start with docker-compose**:
@@ -106,6 +107,7 @@ services:
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:?}
       - SESSION_SECRET=${SESSION_SECRET:?}
       - COOKIE_SECURE=${COOKIE_SECURE:-false}
+      - TRUST_PROXY=${TRUST_PROXY:-false}
     volumes:
       - ${DATA_DIR:-./data}:/app/data
     restart: unless-stopped
@@ -156,6 +158,7 @@ Copy the output and use it as your `SESSION_SECRET` value.
 | `ADMIN_PASSWORD` | Admin password (plain text) | Yes | - |
 | `SESSION_SECRET` | Session secret | Yes | - |
 | `COOKIE_SECURE` | Set `true` behind HTTPS | No | `false` |
+| `TRUST_PROXY` | Set `true` behind a reverse proxy (Traefik, Nginx, etc.) | No | `false` |
 
 ### .env example
 
@@ -172,6 +175,7 @@ ADMIN_EMAIL=admin@example.com
 ADMIN_PASSWORD=
 SESSION_SECRET=change-me
 COOKIE_SECURE=false
+TRUST_PROXY=false
 ```
 
 Store the admin password in `ADMIN_PASSWORD` (plain text).
@@ -254,6 +258,16 @@ Returns:
 ```
 
 ## 🔧 Troubleshooting
+
+### ERR_ERL_UNEXPECTED_X_FORWARDED_FOR
+
+If you see this error in the logs when running behind Traefik, Nginx, or another reverse proxy:
+
+```
+ValidationError: The 'X-Forwarded-For' header is set but the Express 'trust proxy' setting is false
+```
+
+Set `TRUST_PROXY=true` in your `.env` file to enable Express's trust proxy setting.
 
 ### "Too many login attempts"
 

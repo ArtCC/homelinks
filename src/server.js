@@ -10,6 +10,7 @@ const {
   cookieSecure,
   port,
   sessionSecret,
+  trustProxy,
   uploadDir,
 } = require("./config/env");
 const { requireAuthApi, requireAuthPage, isAuthenticated } = require("./middleware/auth");
@@ -29,6 +30,10 @@ fs.mkdirSync(uploadDir, { recursive: true });
 
 const app = express();
 const publicDir = path.join(baseDir, "public");
+
+if (trustProxy) {
+  app.set("trust proxy", 1);
+}
 
 app.use(express.json());
 app.use(morgan("combined"));

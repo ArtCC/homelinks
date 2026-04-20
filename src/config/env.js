@@ -11,6 +11,7 @@ const sessionSecret = process.env.SESSION_SECRET || "change-me";
 const adminEmail = process.env.ADMIN_EMAIL;
 const adminPassword = process.env.ADMIN_PASSWORD;
 const cookieSecure = process.env.COOKIE_SECURE === "true";
+const trustProxy = process.env.TRUST_PROXY === "true";
 
 module.exports = {
   baseDir,
@@ -22,4 +23,5 @@ module.exports = {
   adminEmail,
   adminPassword,
   cookieSecure,
+  trustProxy,
 };
