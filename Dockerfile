@@ -6,8 +6,9 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends python3 make g++ \
   && rm -rf /var/lib/apt/lists/*
 
-COPY package.json ./
-RUN npm install --production
+COPY package.json package-lock.json ./
+# Build sqlite3 against the container's glibc instead of using a newer prebuilt binary.
+RUN npm_config_build_from_source=sqlite3 npm ci --omit=dev
 
 COPY . ./
 
