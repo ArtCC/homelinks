@@ -35,7 +35,7 @@ Keep all your Docker services organized in one place. A modern, self-hosted dash
 ### Technical
 - **SQLite persistence** - No external database needed
 - **Docker-first** - Ready for Docker/Portainer deployment
-- **Session persistence** - Login lasts 30 days across browser restarts
+- **Session persistence** - Login cookie lasts 30 days while the server session is available
 - **Rate limiting** - Protection against brute force (5 attempts/15min)
 - **Timing-attack protection** - Secure credential comparison
 - **URL validation** - Only valid HTTP/HTTPS
@@ -48,7 +48,7 @@ Keep all your Docker services organized in one place. A modern, self-hosted dash
 
 ## 🧱 Tech Stack
 
-- **Backend**: Node.js 20 + Express
+- **Backend**: Node.js 20.17+ + Express
 - **Database**: SQLite 3
 - **Frontend**: Vanilla HTML/CSS/JS + Lucide Icons
 - **Deployment**: Docker + docker-compose
@@ -184,7 +184,7 @@ Store the admin password in `ADMIN_PASSWORD` (plain text).
 
 ## 💾 Data persistence
 
-The SQLite database is stored at `DB_PATH` and uploads go to `UPLOAD_DIR`. With Docker, map a volume (e.g. `./data:/app/data`) so data survives container restarts.
+The SQLite database is stored at `DB_PATH` and uploads go to `UPLOAD_DIR`. With Docker, map a volume (e.g. `./data:/app/data`) so data survives container restarts. Login sessions are kept in memory, so users must log in again after the container or Node.js process restarts.
 
 ### Permissions (Linux servers)
 
@@ -211,7 +211,7 @@ sudo chmod 775 /opt/docker/homelinks/data
 - **URL validation**: Only valid HTTP/HTTPS URLs are accepted
 - **Image validation**: Size, dimensions, and format checks
 - **Input length validation**: Category (50 chars) and description (500 chars) limits enforced server-side
-- **Session security**: HttpOnly cookies with SameSite protection (30-day duration)
+- **Session security**: HttpOnly cookies with SameSite protection (30-day cookie duration; sessions reset when the process restarts)
 - **SQL injection prevention**: Prepared statements in all database queries
 - **Graceful shutdown**: Proper database connection cleanup on termination
 

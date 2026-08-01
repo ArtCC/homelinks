@@ -21,6 +21,9 @@ const categoryFilter = document.getElementById("category-filter");
 const categorySuggestions = document.getElementById("category-suggestions");
 const countLabel = document.getElementById("count");
 const pagination = document.getElementById("pagination");
+const loadingState = document.getElementById("loading-state");
+const loadError = document.getElementById("load-error");
+const retryLoadBtn = document.getElementById("retry-load-btn");
 const prevPageBtn = document.getElementById("prev-page");
 const nextPageBtn = document.getElementById("next-page");
 const pageInfo = document.getElementById("page-info");
@@ -424,12 +427,41 @@ function renderApps(apps) {
 }
 
 async function load() {
-  allApps = await fetchApps();
-  const categories = await fetchCategories();
-  updateCategorySuggestions(categories);
-  updateCategoryFilter(categories);
-  renderAndPaginate();
+  const showLoading = allApps.length === 0;
+  loadError.hidden = true;
+  if (showLoading) {
+    loadingState.hidden = false;
+    list.hidden = true;
+    empty.hidden = true;
+  }
+
+  try {
+    allApps = await fetchApps();
+    const categories = await fetchCategories();
+    updateCategorySuggestions(categories);
+    updateCategoryFilter(categories);
+    renderAndPaginate();
+  } catch (err) {
+    console.error("Failed to load apps:", err);
+    allApps = [];
+    renderAndPaginate();
+    empty.hidden = true;
+    loadError.hidden = false;
+    if (typeof lucide !== "undefined") {
+      lucide.createIcons();
+    }
+    showToast("Unable to load apps. Please try again.", "error");
+  } finally {
+    if (showLoading) {
+      loadingState.hidden = true;
+      list.hidden = false;
+    }
+  }
 }
+
+retryLoadBtn.addEventListener("click", () => {
+  load();
+});
 
 function renderAndPaginate() {
   const filtered = getFilteredApps();

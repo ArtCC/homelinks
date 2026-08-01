@@ -10,42 +10,56 @@ fs.mkdirSync(path.dirname(dbPath), { recursive: true });
 
 const db = new sqlite3.Database(dbPath);
 
-db.serialize(() => {
-  db.run(
-    "CREATE TABLE IF NOT EXISTS apps (" +
-    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-    "name TEXT NOT NULL, " +
-    "url TEXT NOT NULL, " +
-    "created_at TEXT DEFAULT CURRENT_TIMESTAMP" +
-    ")"
-  );
-
-  db.all("PRAGMA table_info(apps)", (err, rows) => {
-    if (err) return;
-    const hasImage = rows.some((row) => row.name === "image_url");
-    if (!hasImage) {
-      db.run("ALTER TABLE apps ADD COLUMN image_url TEXT");
-    }
-    const hasFavorite = rows.some((row) => row.name === "favorite");
-    if (!hasFavorite) {
-      db.run("ALTER TABLE apps ADD COLUMN favorite INTEGER DEFAULT 0");
-    }
-    const hasCategory = rows.some((row) => row.name === "category");
-    if (!hasCategory) {
-      db.run("ALTER TABLE apps ADD COLUMN category TEXT");
-    }
-    const hasDescription = rows.some((row) => row.name === "description");
-    if (!hasDescription) {
-      db.run("ALTER TABLE apps ADD COLUMN description TEXT");
-    }
-
+const initialization = new Promise((resolve, reject) => {
+  db.serialize(() => {
     db.run(
-      "UPDATE apps SET category = UPPER(TRIM(category)) WHERE category IS NOT NULL AND category != ''"
+      "CREATE TABLE IF NOT EXISTS apps (" +
+      "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+      "name TEXT NOT NULL, " +
+      "url TEXT NOT NULL, " +
+      "created_at TEXT DEFAULT CURRENT_TIMESTAMP" +
+      ")",
+      (createError) => {
+        if (createError) return reject(createError);
+
+        db.all("PRAGMA table_info(apps)", (infoError, rows) => {
+          if (infoError) return reject(infoError);
+
+          const columns = [
+            ["image_url", "ALTER TABLE apps ADD COLUMN image_url TEXT"],
+            ["favorite", "ALTER TABLE apps ADD COLUMN favorite INTEGER DEFAULT 0"],
+            ["category", "ALTER TABLE apps ADD COLUMN category TEXT"],
+            ["description", "ALTER TABLE apps ADD COLUMN description TEXT"],
+          ];
+          const migrations = columns
+            .filter(([name]) => !rows.some((row) => row.name === name))
+            .map(([, sql]) => sql);
+
+          const applyMigration = (index) => {
+            if (index >= migrations.length) {
+              return db.run(
+                "UPDATE apps SET category = UPPER(TRIM(category)) WHERE category IS NOT NULL AND category != ''",
+                (updateError) => {
+                  if (updateError) return reject(updateError);
+                  resolve();
+                }
+              );
+            }
+            return db.run(migrations[index], (migrationError) => {
+              if (migrationError) return reject(migrationError);
+              applyMigration(index + 1);
+            });
+          };
+
+          applyMigration(0);
+        });
+      }
     );
   });
 });
 
-function run(sql, params = []) {
+async function run(sql, params = []) {
+  await initialization;
   return new Promise((resolve, reject) => {
     db.run(sql, params, function (err) {
       if (err) return reject(err);
@@ -54,7 +68,8 @@ function run(sql, params = []) {
   });
 }
 
-function all(sql, params = []) {
+async function all(sql, params = []) {
+  await initialization;
   return new Promise((resolve, reject) => {
     db.all(sql, params, (err, rows) => {
       if (err) return reject(err);
@@ -135,11 +150,11 @@ module.exports = {
     return run("DELETE FROM apps WHERE id = ?", [id]);
   },
   close() {
-    return new Promise((resolve) => {
+    return initialization.then(() => new Promise((resolve) => {
       db.close((err) => {
         if (err) console.error("Error closing database:", err);
         resolve();
       });
-    });
+    }));
   },
 };

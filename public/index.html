@@ -40,22 +40,22 @@
         <p>Quick access to your Docker apps</p>
       </div>
       <div class="header-actions">
-        <button id="view-toggle-btn" class="btn-ghost" title="Toggle view">
+        <button id="view-toggle-btn" class="btn-ghost btn-icon-label" title="Toggle view" aria-label="Toggle view">
           <i data-lucide="grid-3x3" id="view-icon"></i>
         </button>
-        <button id="theme-toggle-btn" class="btn-ghost" title="Toggle theme">
+        <button id="theme-toggle-btn" class="btn-ghost btn-icon-label" title="Toggle theme" aria-label="Toggle theme">
           <i data-lucide="monitor" id="theme-icon"></i>
         </button>
-        <button id="export-btn" class="btn-ghost" title="Export backup">
+        <button id="export-btn" class="btn-ghost" title="Export backup" aria-label="Export backup">
           <i data-lucide="download"></i>
           <span>Export</span>
         </button>
-        <button id="import-btn" class="btn-ghost" title="Import backup">
+        <button id="import-btn" class="btn-ghost" title="Import backup" aria-label="Import backup">
           <i data-lucide="upload"></i>
           <span>Import</span>
         </button>
         <input type="file" id="import-zip-input" accept=".zip,application/zip" hidden />
-        <button id="logout-btn" class="btn-ghost">
+        <button id="logout-btn" class="btn-ghost" aria-label="Log out">
           <i data-lucide="log-out"></i>
           <span>Logout</span>
         </button>
@@ -119,6 +119,19 @@
         </select>
         <span id="count" class="count"></span>
       </div>
+      <div id="loading-state" class="loading-state" hidden aria-live="polite" aria-label="Loading apps">
+        <span class="skeleton skeleton-heading"></span>
+        <div class="skeleton-grid">
+          <span class="skeleton skeleton-card"></span>
+          <span class="skeleton skeleton-card"></span>
+          <span class="skeleton skeleton-card"></span>
+        </div>
+      </div>
+      <div id="load-error" class="load-error" hidden role="alert">
+        <i data-lucide="wifi-off" class="load-error-icon"></i>
+        <p>Unable to load your apps.</p>
+        <button type="button" id="retry-load-btn" class="btn-ghost">Try again</button>
+      </div>
       <div id="empty" class="empty" hidden>
         <i data-lucide="inbox" class="empty-icon" id="empty-icon"></i>
         <p id="empty-message">You do not have any apps yet.</p>
@@ -148,7 +161,7 @@
         <div class="app-thumbnail-placeholder">
           <i data-lucide="package"></i>
         </div>
-        <button class="btn-favorite" title="Toggle favorite">
+         <button class="btn-favorite" title="Toggle favorite" aria-label="Toggle favorite">
           <i data-lucide="star" class="star-icon"></i>
         </button>
       </div>
@@ -159,14 +172,14 @@
         <p class="app-description"></p>
       </div>
       <div class="app-actions">
-        <button class="btn-primary open" title="Open in new tab">
+         <button class="btn-primary open" title="Open in new tab" aria-label="Open app in new tab">
           <i data-lucide="external-link"></i>
           <span>Open</span>
         </button>
-        <button class="btn-ghost edit" title="Edit">
+         <button class="btn-ghost edit" title="Edit" aria-label="Edit app">
           <i data-lucide="pencil"></i>
         </button>
-        <button class="btn-ghost btn-danger delete" title="Delete">
+         <button class="btn-ghost btn-danger delete" title="Delete" aria-label="Delete app">
           <i data-lucide="trash-2"></i>
         </button>
       </div>
@@ -188,17 +201,17 @@
         <p class="list-item-description"></p>
       </div>
       <div class="list-item-actions">
-        <button class="btn-favorite" title="Toggle favorite">
+         <button class="btn-favorite" title="Toggle favorite" aria-label="Toggle favorite">
           <i data-lucide="star" class="star-icon"></i>
         </button>
-        <button class="btn-primary open" title="Open in new tab">
+         <button class="btn-primary open" title="Open in new tab" aria-label="Open app in new tab">
           <i data-lucide="external-link"></i>
           <span>Open</span>
         </button>
-        <button class="btn-ghost edit" title="Edit">
+         <button class="btn-ghost edit" title="Edit" aria-label="Edit app">
           <i data-lucide="pencil"></i>
         </button>
-        <button class="btn-ghost btn-danger delete" title="Delete">
+         <button class="btn-ghost btn-danger delete" title="Delete" aria-label="Delete app">
           <i data-lucide="trash-2"></i>
         </button>
       </div>
