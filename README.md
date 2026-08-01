@@ -45,6 +45,7 @@ Keep all your Docker services organized in one place. A modern, self-hosted dash
 - **Auto-migration** - Database schema upgrades automatically on startup
 - **Graceful shutdown** - Clean database connection handling
 - **Health check endpoint** - Database connectivity verification
+- **Automatic releases** - Pushes to `main` create a version tag and GitHub release when the top `CHANGELOG.md` version is newer than the latest tag
 
 ## 🧱 Tech Stack
 

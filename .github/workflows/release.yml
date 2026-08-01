@@ -1,0 +1,74 @@
+name: Create release from changelog
+
+on:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check changelog version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          version="$(sed -nE 's/^## \[([0-9]+\.[0-9]+\.[0-9]+)\].*/\1/p' CHANGELOG.md | sed -n '1p')"
+          if [[ -z "$version" ]]; then
+            echo "No release version found at the top of CHANGELOG.md"
+            exit 1
+          fi
+
+          latest_tag="$(git tag --list | sed -nE 's/^v?([0-9]+\.[0-9]+\.[0-9]+)$/\1/p' | sort -V | sed -n '$p')"
+          latest_tag="${latest_tag:-0.0.0}"
+
+          if [[ "$version" == "$latest_tag" ]] || [[ "$(printf '%s\n' "$latest_tag" "$version" | sort -V | sed -n '1p')" != "$latest_tag" ]]; then
+            echo "Changelog version $version is not newer than tag $latest_tag"
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          awk -v version="$version" '
+            $0 ~ "^## \\[" version "\\]" { found=1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > release-notes.md
+
+          if [[ ! -s release-notes.md ]]; then
+            echo "The changelog section for $version is empty"
+            exit 1
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "should_release=true" >> "$GITHUB_OUTPUT"
+
+      - name: Create tag
+        if: steps.version.outputs.should_release == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag "$VERSION" "$GITHUB_SHA"
+          git push origin "$VERSION"
+
+      - name: Create GitHub release
+        if: steps.version.outputs.should_release == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          gh release create "$VERSION" \
+            --repo "$GITHUB_REPOSITORY" \
+            --verify-tag \
+            --title "Homelinks $VERSION" \
+            --notes-file release-notes.md
