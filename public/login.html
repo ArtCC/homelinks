@@ -10,7 +10,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
-<body>
+<body class="login-page">
   <script>
     // Apply theme before render to avoid flash
     (function () {
@@ -30,10 +30,12 @@
         <img src="/icon.svg" alt="" class="icon-logo">
         Homelinks
       </h1>
+      <p class="auth-kicker">Your services, one click away</p>
     </header>
 
-    <section class="form-card auth-card">
-      <h2>Login</h2>
+    <section class="form-card auth-card" aria-labelledby="login-title">
+      <h2 id="login-title">Welcome back</h2>
+      <p class="auth-intro">Sign in to manage your Docker services.</p>
       <form id="login-form">
         <label>
           Email

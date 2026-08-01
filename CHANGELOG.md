@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.12] - 2026-08-01
+
+### Changed
+
+- Refined the login page layout with a dedicated vertical form, improved hierarchy, responsive spacing, and clearer feedback
+- Restricted the dashboard two-column form layout to the app form so it does not affect login
+- Made Docker dependency installation reproducible and compile `sqlite3` against the container's glibc
+
+### Fixed
+
+- Added the missing `picomatch` dependency required by the production `sqlite3` installation tree
+
 ## [0.0.11] - 2026-08-01
 
 ### Security
